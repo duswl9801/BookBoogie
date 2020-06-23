@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="5dp">
+
+    <ImageView
+        android:id="@+id/bool_cover_img"
+        android:layout_width="80dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="10dp"
+        android:scaleType="center"
+        tools:srcCompat="@tools:sample/backgrounds/scenic[2]" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp">
+
+        <TextView
+            android:id="@+id/book_title"
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp"
+            android:ellipsize="end"
+            android:ems="20"
+            android:maxLines="1"
+            android:text="title일이삼사오육칠팔구십dkdjfijiefijefijeifjijeifjiwffewfg"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/book_author"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:maxLines="1"
+            android:text="author"/>
+
+        <TextView
+            android:id="@+id/book_price"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="price"/>
+
+        <TextView
+            android:id="@+id/book_description"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="description
+            fgjeigjigjeogjkfkeofkopwskefopksfopekfopekpokgpokepokfgsopwpoegpwekigp"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

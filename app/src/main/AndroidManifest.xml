@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.reading_app.bookboogie">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_luncher_bookboogie"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:hardwareAccelerated="true">
+
+        <activity android:name="com.reading_app.bookboogie.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".LoadingActivity"></activity>
+
+        <activity android:name=".ReadBooksCategoriesActivity"></activity>
+        <activity android:name=".AddReadBookActivity"></activity>
+
+        <activity android:name=".WantReadCategoriesActivity"></activity>
+        <activity android:name=".AddWantReadBookActivity"></activity>
+
+        <activity android:name=".SavedPassageListsActivity"></activity>
+
+        <activity android:name=".CalenderActivity"></activity>
+
+        <activity android:name=".DictionaryActivity"></activity>
+
+        <activity android:name=".AnotherMainActivity"></activity>
+<!--        <activity android:name=".ProfileActivity"></activity>-->
+        <activity android:name=".ISBNScanActivity"></activity>
+        <activity android:name=".CollectedBooksActivity"></activity>
+        <activity android:name=".BookSearchActivity"></activity>
+        <activity android:name=".ScanActivity"></activity>
+        <activity android:name=".BarcodeReader"></activity>
+        <activity android:name=".DirectAddDialogActivity" android:theme="@style/Theme.DirectAddDialog" ></activity>
+        <activity android:name=".NoResultDialogActivity" android:theme="@style/Theme.DirectAddDialog"></activity>
+        <activity android:name=".SplashActivity"></activity>
+
+    </application>
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera2"
+        android:required="true"/>
+
+</manifest>
