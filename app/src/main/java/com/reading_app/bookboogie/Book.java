@@ -18,7 +18,7 @@ public class Book implements Serializable {
 
     // 검색해서 받아올 수 있는 정보
     public String title; // 검색결과 문서의 제목
-    public String image = "";
+    public String image;
     public String author;
     public String  price;
     public String publisher;
@@ -26,11 +26,15 @@ public class Book implements Serializable {
     public String description;
 
     // 사용자가 입력해야 하는 정보
-    public double rating;
+    public float rating;
     public int readYear;
     public int readMonth;
     public String category;
     public String memo;
+
+    // 검색해서 저장한 책인지 직접 입력한 책인지 구분하는 변수.
+    // 이 변수에 따라서 이미지를 저장하는 방법이 달라짐.
+    public boolean isSearchedBook = true;
 
     public String getTitle() {
         return title;
@@ -41,11 +45,11 @@ public class Book implements Serializable {
     }
 
     // 책 이미지를 가져올때 바로 uri로 가져오도록 함.
-    public Uri getImage() {
+    public String getImage() {
 
-        Uri image_uri = Uri.parse(image);
+//        Uri image_uri = Uri.parse(image);
 
-        return image_uri;
+        return image;
     }
 
     public void setImage(String image) {
@@ -92,11 +96,11 @@ public class Book implements Serializable {
         this.description = description;
     }
 
-    public double getRating() {
+    public float getRating() {
         return rating;
     }
 
-    public void setRating(double rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 
@@ -145,10 +149,11 @@ public class Book implements Serializable {
         this.readMonth = 0;
         this.category = "category";
         this.memo = "memo";
+        this.isSearchedBook = true;
     }
 
     public Book(String title, String image, String author, String price, String publisher,
-                String isbn, String description, double rating, int readYear, int readMonth, String category, String memo){
+                String isbn, String description, float rating, int readYear, int readMonth, String category, String memo){
         this.title = title;
         this.image = image;
         this.author = author;

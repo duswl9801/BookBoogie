@@ -43,6 +43,7 @@
         <activity android:name=".DirectAddDialogActivity" android:theme="@style/Theme.DirectAddDialog" ></activity>
         <activity android:name=".NoResultDialogActivity" android:theme="@style/Theme.DirectAddDialog"></activity>
         <activity android:name=".SplashActivity"></activity>
+        <activity android:name=".BookCheckActivity"></activity>
 
     </application>
 

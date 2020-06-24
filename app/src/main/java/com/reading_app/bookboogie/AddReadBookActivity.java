@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +29,7 @@ import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -41,9 +43,12 @@ public class AddReadBookActivity extends AppCompatActivity {
 //    private File tempFile;
     private static ImageButton addBookImgBtn;
     Bitmap bitmap;
-//    Book book;
+    Book book;
+
+    String bitmap_to_string;
 
     int readYear = 0, readMonth = 0, readDay = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +73,6 @@ public class AddReadBookActivity extends AppCompatActivity {
             }
         }
 
-        Book book = new Book();
-
         // 책 정보 들어있는 인텐트 받기. 제목이 "title"이면 사용자가 직접 입력하는 경우.
         Intent book_data = getIntent();
         book = (Book)book_data.getSerializableExtra("Book");
@@ -90,15 +93,15 @@ public class AddReadBookActivity extends AppCompatActivity {
 //        EditText memo = findViewById(R.id.memoText);
 
         if(book.getTitle().equals("title")){    // 사용자가 직접 책 추가하는 경우
-
+            book.isSearchedBook = false;
         } else {        // 책 정보 받아와서 추가하는 경우
+
             title.setText(book.getTitle());
             // 커서 맨 마지막으로 놓기
             title.setSelection(title.length());
             Glide.with(this).load(book.getImage()).override(400, 600).into(addBookImgBtn);
 
         }
-
 
         addBookImgBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,9 +132,28 @@ public class AddReadBookActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                Log.d("searched", "book.isSearchedBook is " + book.isSearchedBook);
+
                 Book input_book = new Book();
 
-                input_book.setImage(addBookImgBtn.getBackground().toString());
+//////////////////////////////////////이미지 버튼의 이미지를 저장하는게 잘못됨.
+//                if(book.isSearchedBook = true){       // 검색해서 저장하는 책일때
+                if(book.isSearchedBook == true){       // 검색해서 저장하는 책일때
+
+                        input_book.setImage(book.getImage());
+                }
+                else{
+
+                    Log.d("searched", "book.isSearched이 false일때 코드");
+
+                    // 저장되는건 input_book이라서 얘의 isSrarchedBook을 false로 바꿨어야 했는데 안바꿔서 직접저장할때 이미지가 안떴었음.
+                    input_book.isSearchedBook = false;
+
+                    // 비트맵 이미지를 문자열로 바꿔서 저장.
+                    bitmap_to_string = getBase64String(bitmap);
+                    input_book.setImage(bitmap_to_string);
+
+                }
                 input_book.setTitle(title.getText().toString());
                 input_book.setRating(ratingBar.getRating());
                 input_book.setMemo(memo.getText().toString());
@@ -139,8 +161,8 @@ public class AddReadBookActivity extends AppCompatActivity {
                 Log.d("BookDataCheck", input_book.getImage().toString());
                 Log.d("BookDataCheck", String.valueOf(input_book.getRating()));
 
-                SharedPreferences book_sharedpreference = getSharedPreferences("book_data", MODE_PRIVATE);
-                SharedPreferences.Editor book_editor = book_sharedpreference.edit();
+                SharedPreferences read_book_sharedpreference = getSharedPreferences("book_data", MODE_PRIVATE);
+                SharedPreferences.Editor book_editor = read_book_sharedpreference.edit();
 
                 // gson이용해서 책 객체를 스트링으로 바꿈.
                 Gson gson = new Gson();
@@ -150,9 +172,11 @@ public class AddReadBookActivity extends AppCompatActivity {
                 book_editor.putString(input_book.title, book_to_string);
                 book_editor.commit();
 
-                Toast.makeText(AddReadBookActivity.this, "commit", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddReadBookActivity.this, "저장 성공", Toast.LENGTH_SHORT).show();
 
+                Log.d("searched_book_check", String.valueOf(input_book.isSearchedBook));
 
+                finish();
 //                book.img = bitmap;
 //                book.title = title.getText().toString();
 //                book.rating = ratingBar.getRating();
@@ -242,9 +266,18 @@ public class AddReadBookActivity extends AppCompatActivity {
                     intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
                     startActivityForResult(intent, PICK_FROM_ALBUM);
                 }
+                /*
+                기본 이미지 선택.
+                사진 찍거나 갤러리에서 이미지 가져올때와 같은 방식으로 사진 전해주려고 이미지 리소스를 비트맵으로 변환해서 저장.
+                 */
                 else {
                     ImageButton addBookImgBtn = findViewById(R.id.addBookImg);
-                    addBookImgBtn.setImageResource(R.drawable.book_cover_book);
+
+                    bitmap = BitmapFactory.decodeResource(AddReadBookActivity.this.getResources(), R.drawable.book_cover_book);
+                    book.isSearchedBook = false;
+                    addBookImgBtn.setImageBitmap(bitmap);
+
+                    Log.d("searched", "book.isSearchedBook is " + book.isSearchedBook);
                 }
 //                String selectedText = items[which].toString();
 //                Toast.makeText(AddReadBookActivity.this, selectedText, Toast.LENGTH_SHORT).show();
@@ -282,17 +315,25 @@ public class AddReadBookActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 // switch코드 쓰는게 훨씬 직관적
         if(requestCode == CAPTURE_IMAGE){
+            book.isSearchedBook = false;
 
             bitmap = (Bitmap) data.getExtras().get("data");
+            Log.d("searched", "book.isSearchedBook is " + book.isSearchedBook);
+
             if(bitmap != null){
                 // 사이즈 조절은 나중에
                 addBookImgBtn.setImageBitmap(bitmap);
+//                addBookImgBtn.get
 //                addBookImgBtn.getBackground(bitmap);
+            }
+            else{
+
             }
         }
 
         if (requestCode == PICK_FROM_ALBUM) {
 
+//            InputStream in = null;
             InputStream in = null;
 
             try{
@@ -302,9 +343,10 @@ public class AddReadBookActivity extends AppCompatActivity {
             }
 
             bitmap = BitmapFactory.decodeStream(in);
+            book.isSearchedBook = false;
             addBookImgBtn.setImageBitmap(bitmap);
 
-
+            Log.d("searched", "book.isSearchedBook is " + book.isSearchedBook);
 
 //            Uri photoUri = data.getData();
 //            Cursor cursor = null;
@@ -349,5 +391,17 @@ public class AddReadBookActivity extends AppCompatActivity {
 //        imageView.setImageBitmap(originalBm);
 //
 //    }
+
+    // 비트맵 이미지를 문자열로 변환시켜주는 메소드.
+    public String getBase64String(Bitmap bitmap)
+    {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+
+        byte[] imageBytes = byteArrayOutputStream.toByteArray();
+
+        return Base64.encodeToString(imageBytes, Base64.NO_WRAP);
+    }
 
 }

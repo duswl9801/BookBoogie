@@ -3,6 +3,7 @@ package com.reading_app.bookboogie;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -45,6 +46,8 @@ public class CollectedBooksActivity extends AppCompatActivity {
             Gson gson = new Gson();
             String json = (String)iter.next();
             books.add(gson.fromJson(json, Book.class));
+
+            Log.d("isSearched_check", String.valueOf(gson.fromJson(json, Book.class).isSearchedBook));
         }
 //        Map<String, ?> allEntries = book_sharedpreference.getAll();
 //        for(Map.Entry<String, ?> entry : allEntries.entrySet()){
