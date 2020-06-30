@@ -8,14 +8,6 @@ import java.io.Serializable;
 
 public class Book implements Serializable {
 
-//    public int img;     // 책 이미지 리소스 id를 담는 변수.
-//    public String title;
-//    public double rating;
-//    public int readYear;
-//    public int readMonth;
-//    public String category;
-//    public String memo;
-
     // 검색해서 받아올 수 있는 정보
     public String title; // 검색결과 문서의 제목
     public String image;
@@ -27,8 +19,8 @@ public class Book implements Serializable {
 
     // 사용자가 입력해야 하는 정보
     public float rating;
-    public int readYear;
-    public int readMonth;
+    public int read_year;
+    public int read_month;
     public String category;
     public String memo;
 
@@ -105,19 +97,19 @@ public class Book implements Serializable {
     }
 
     public int getReadYear() {
-        return readYear;
+        return read_year;
     }
 
     public void setReadYear(int readYear) {
-        this.readYear = readYear;
+        this.read_year = readYear;
     }
 
     public int getReadMonth() {
-        return readMonth;
+        return read_month;
     }
 
     public void setReadMonth(int readMonth) {
-        this.readMonth = readMonth;
+        this.read_month = readMonth;
     }
 
     public String getCategory() {
@@ -145,8 +137,8 @@ public class Book implements Serializable {
         this.isbn = "isbn";
         this.description = "description";
         this.rating = 0;
-        this.readYear = 0;
-        this.readMonth = 0;
+        this.read_year = 0;
+        this.read_month = 0;
         this.category = "category";
         this.memo = "memo";
         this.isSearchedBook = true;
@@ -162,8 +154,8 @@ public class Book implements Serializable {
         this.isbn = isbn;
         this.description = description;
         this.rating = rating;
-        this.readYear = readYear;
-        this.readMonth = readMonth;
+        this.read_year = readYear;
+        this.read_month = readMonth;
         this.category = category;
         this.memo = memo;
     }

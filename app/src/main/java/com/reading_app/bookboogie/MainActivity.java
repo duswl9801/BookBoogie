@@ -4,11 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,6 +23,16 @@ public class MainActivity extends AppCompatActivity {
      */
     private static final int READ_BOOKS = 0;
     private static final int WANT_READ_BOOKS = 1;
+
+    // 읽은 책들, 읽고 싶은 책들, 저장한 문장들의 개수를 저장해 놓을 변수.
+    int count = 0;
+
+    // 저장된 책들과 문장들을 열때 사용할 변수.
+    SharedPreferences prefs;
+
+    TextView read_books_count;
+    TextView want_books_count;
+    TextView saved_passage_count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,12 +50,17 @@ public class MainActivity extends AppCompatActivity {
         ConstraintLayout dictionary_container = findViewById(R.id.dictionary_container);
         ConstraintLayout change_theme_container = findViewById(R.id.change_theme_container);
 
+        read_books_count = findViewById(R.id.read_books_count);
+        want_books_count = findViewById(R.id.want_read_books_count);
+        saved_passage_count = findViewById(R.id.saved_passage_count);
+
         // 이 서치뷰에서 책을 검색하면 책 정보가 뜨고 책 정보를 가져와서 저장할 수 있음.
         ImageButton book_search_btn = findViewById(R.id.book_search_btn);
 
         // 책의 바코드(isbn)을 찍어서 정보를 가져올 수 있게하는 카메라 버튼.
         ImageButton camera_btn = findViewById(R.id.camera_btn);
 
+        setCounts();
 
         // 사용자가 원하는 기능의 화면 클릭했을 때, 해당 액티비티로 이동
         read_books_container.setOnClickListener(new View.OnClickListener() {
@@ -112,6 +130,37 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+    }
+
+    public void setCounts(){
+
+        // 읽은 책들 개수 세팅
+        prefs = getSharedPreferences("book_data", MODE_PRIVATE);
+        Map<String, ?> read_book_prefsMap = prefs.getAll();
+        for(Map.Entry<String, ?> entrty : read_book_prefsMap.entrySet()){
+            count++;
+        }
+
+        read_books_count.setText(String.valueOf(count));
+
+        // 개수 초기화
+        count = 0;
+
+        // 읽고 싶은 책들 개수 세팅
+        prefs = getSharedPreferences("wanted_book_data", MODE_PRIVATE);
+        Map<String, ?> prefsMap = prefs.getAll();
+        for(Map.Entry<String, ?> entrty : prefsMap.entrySet()){
+            count++;
+        }
+
+        want_books_count.setText(String.valueOf(count));
+
+        // 개수 초기화
+        count = 0;
+
+        // 저장된 문장들 개수 세팅
 
 
     }

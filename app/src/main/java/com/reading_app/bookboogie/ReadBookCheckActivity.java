@@ -51,6 +51,7 @@ public class ReadBookCheckActivity extends AppCompatActivity {
         ImageView book_img = findViewById(R.id.book_img);
         TextView book_title_textview = findViewById(R.id.book_title_textview);
         RatingBar rating_bar = findViewById(R.id.ratingBar);
+        TextView year_month_textview = findViewById(R.id.year_month_textview);
         TextInputEditText memo = findViewById(R.id.memoText);
 
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -79,7 +80,7 @@ public class ReadBookCheckActivity extends AppCompatActivity {
 
         book_title_textview.setText(book.getTitle());
         rating_bar.setRating(book.getRating());
-
+        year_month_textview.setText(String.valueOf(book.getReadYear()) + "." + String.valueOf(book.getReadMonth()));
         memo.setText(book.getMemo());
 
 

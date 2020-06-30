@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -42,6 +43,7 @@ public class CollectedBooksActivity extends AppCompatActivity {
         ImageButton back_btn = findViewById(R.id.back_btn);
         TextView book_type_textview = findViewById(R.id.book_type);
         ImageButton add_book_btn = findViewById(R.id.add_book_btn);
+        Button month_pick_btn = findViewById(R.id.month_pick_btn);
 
         // 메인에서 값 받아서 book_type가 0이면 읽은 책들에 저장되어있는 책을 보여주고
         // 1아면 읽고 싶은 책들에 저장되어 있는 책을 보여줌.
@@ -66,6 +68,9 @@ public class CollectedBooksActivity extends AppCompatActivity {
             }
 
         } else if(book_type == 1){      // 읽고 싶은 책들 불러오기
+
+            // 읽고 싶은 책들에서는 책의 읽은 년도, 월 필요 없기때문에 버튼 사라지게 함.
+            month_pick_btn.setVisibility(View.GONE);
 
             book_type_textview.setText("읽고 싶은 책들");
 
@@ -122,6 +127,13 @@ public class CollectedBooksActivity extends AppCompatActivity {
                     intent.putExtra("Book", new Book());
                     startActivity(intent);
                 }
+
+            }
+        });
+
+        month_pick_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
             }
         });

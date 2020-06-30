@@ -43,13 +43,27 @@ public class AddReadBookActivity extends AppCompatActivity {
 
     // onActivityRedult에서도 쓰이기 때문에 static으로 선언함.
     private static ImageButton addBookImgBtn;
+    Button month_btn;
 
     Bitmap bitmap;
     Book book;
 
     String bitmap_to_string;
 
-    int readYear = 0, readMonth = 0, readDay = 0;
+    int read_year = 0, read_month = 0;
+
+    // 읽은 월 추가 버튼을 눌러서 확인 버튼을 누르면 이 리스너가 실행됨.
+    // 다이얼로그에서 선택된 년도, 월 값 받아서 버튼에 세팅.
+    DatePickerDialog.OnDateSetListener month_picker_listener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+
+            read_year = year;
+            read_month = month;
+
+            month_btn.setText(String.valueOf(read_year) + "." + String.valueOf(read_month));
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,14 +99,8 @@ public class AddReadBookActivity extends AppCompatActivity {
         // saveBtn누를 때, 이 뷰들 안에 있는 값들을 가져와야 하기 때문에 final로 선언
         final EditText title = findViewById(R.id.book_title_editview);
         final RatingBar ratingBar = findViewById(R.id.ratingBar);
-        final TextView day = findViewById(R.id.day);
+        month_btn = findViewById(R.id.input_month);
         final EditText memo = findViewById(R.id.memoText);
-
-//        EditText title = findViewById(R.id.titleText);
-//        RatingBar ratingBar = findViewById(R.id.ratingBar);
-//        TextView day = findViewById(R.id.day);
-//        Button categoryBtn = findViewById(R.id.categoryBtn);
-//        EditText memo = findViewById(R.id.memoText);
 
         if(book.getTitle().equals("title")){    // 사용자가 직접 책 추가하는 경우
             book.isSearchedBook = false;
@@ -112,10 +120,12 @@ public class AddReadBookActivity extends AppCompatActivity {
             }
         });
 
-        day.setOnClickListener(new View.OnClickListener() {
+        month_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selecteDay();
+                YearMonthPickerDialog year_month_pick_dialog = new YearMonthPickerDialog();
+                year_month_pick_dialog.setListener(month_picker_listener);
+                year_month_pick_dialog.show(getSupportFragmentManager(), "YearMonthPicker");
 
             }
 
@@ -131,8 +141,6 @@ public class AddReadBookActivity extends AppCompatActivity {
 
                 Book input_book = new Book();
 
-//////////////////////////////////////이미지 버튼의 이미지를 저장하는게 잘못됨.
-//                if(book.isSearchedBook = true){       // 검색해서 저장하는 책일 때
                 if(book.isSearchedBook == true){       // 검색해서 저장하는 책일 때
 
                         input_book.setImage(book.getImage());
@@ -151,6 +159,8 @@ public class AddReadBookActivity extends AppCompatActivity {
                 }
                 input_book.setTitle(title.getText().toString());
                 input_book.setRating(ratingBar.getRating());
+                input_book.setReadYear(read_year);
+                input_book.setReadMonth(read_month);
                 input_book.setMemo(memo.getText().toString());
 
                 Log.d("BookDataCheck", input_book.getImage().toString());
@@ -180,8 +190,6 @@ public class AddReadBookActivity extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(getApplicationContext(), ReadBooksCategoriesActivity.class);
-//                startActivity(intent);
                 onBackPressed();
             }
         });
@@ -268,28 +276,26 @@ public class AddReadBookActivity extends AppCompatActivity {
         getImgDialog.show();
     }
 
-    void selecteDay(){
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-//                book.readYear = year;
-//                book.readMonth = month + 1;
-//                book.readDay = dayOfMonth;
-                readYear = year;
-                readMonth = month + 1;
-                readDay = dayOfMonth;
-
-                final TextView day = findViewById(R.id.day);
-                day.setText(readYear+"."+readMonth+"."+readDay);
-
-            }
-        }, 2020, 2, 10);
-
-
-        datePickerDialog.getDatePicker().setMaxDate(new Date().getTime());
-        datePickerDialog.show();
-
-    }
+//    void selecteDay(){
+//        DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+//            @Override
+//            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+//
+//                readYear = year;
+//                readMonth = month + 1;
+//                readDay = dayOfMonth;
+//
+//                final TextView day = findViewById(R.id.month);
+//                day.setText(readYear+"."+readMonth+"."+readDay);
+//
+//            }
+//        }, 2020, 2, 10);
+//
+//
+//        datePickerDialog.getDatePicker().setMaxDate(new Date().getTime());
+//        datePickerDialog.show();
+//
+//    }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 

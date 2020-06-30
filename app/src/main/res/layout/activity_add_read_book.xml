@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -207,51 +207,22 @@
             android:textCursorDrawable="@android:color/transparent" />
     </com.google.android.material.textfield.TextInputLayout>
 
-
-    <!--        <Button-->
-<!--            android:id="@+id/categoryBtn"-->
-<!--            style="@style/Widget.AppCompat.Button.Borderless"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_below="@id/day"-->
-<!--            android:layout_alignBaseline="@id/textView33"-->
-<!--            android:layout_alignLeft="@id/day"-->
-<!--            android:layout_alignParentRight="true"-->
-<!--            android:background="@android:color/transparent"-->
-<!--            android:text="카테고리를 선택해주세요"-->
-<!--            android:textColor="@android:color/darker_gray"-->
-<!--            android:textSize="18sp" />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/textView33"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_below="@id/textView32"-->
-<!--            android:layout_marginLeft="15dp"-->
-<!--            android:layout_marginTop="20dp"-->
-<!--            android:text="category"-->
-<!--            android:textColor="@android:color/background_dark"-->
-<!--            android:textSize="18sp" />-->
-
-
-    <TextView
-        android:id="@+id/day"
+    <Button
+        android:id="@+id/input_month"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
         android:layout_marginLeft="100dp"
-        android:layout_marginTop="24dp"
+
         android:background="@android:color/transparent"
-        android:text="날짜를 선택해주세요(수정예정)"
+        android:text="읽은 달을 선택해주세요"
         android:textColor="@android:color/darker_gray"
-        android:textSize="18sp"
+        android:textSize="17sp"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ratingBar"
-        app:layout_constraintVertical_bias="0.005" />
-
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
