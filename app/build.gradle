@@ -46,4 +46,7 @@ dependencies {
     // 클래스 객체를 SharedPreferences에 저장하기 위해 사용한 라이브러리
     implementation 'com.google.code.gson:gson:2.8.6'
 
+    // 차트 라이브러리. MPAndroidChart
+    implementation 'com.github.PhilJay:MPAndroidChart:v2.2.4'
+
 }
