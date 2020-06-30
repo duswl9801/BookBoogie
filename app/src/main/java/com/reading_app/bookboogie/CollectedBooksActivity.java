@@ -27,6 +27,7 @@ public class CollectedBooksActivity extends AppCompatActivity {
 
     /*
     책이 읽은 책인지 읽고 싶은 책인지 알기 위한 변수.
+    메인에서 인텐트로 값 받아온다.
     0이 읽은 책, 1이 읽고 싶은 책이다.
     기본 값은 0.
      */
@@ -37,18 +38,54 @@ public class CollectedBooksActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collected_books);
 
-        // 쉐어드 프리퍼런스 열기.
-        SharedPreferences book_sharedpreference = getSharedPreferences("book_data", MODE_PRIVATE);
-        Collection<?> collection = book_sharedpreference.getAll().values();
-        Iterator<?> iter = collection.iterator();
+        // xml파일의 속성들 객체화
+        ImageButton back_btn = findViewById(R.id.back_btn);
+        TextView book_type_textview = findViewById(R.id.book_type);
+        ImageButton add_book_btn = findViewById(R.id.add_book_btn);
 
-        while(iter.hasNext()){
-            Gson gson = new Gson();
-            String json = (String)iter.next();
-            books.add(gson.fromJson(json, Book.class));
+        // 메인에서 값 받아서 book_type가 0이면 읽은 책들에 저장되어있는 책을 보여주고
+        // 1아면 읽고 싶은 책들에 저장되어 있는 책을 보여줌.
+        Intent book_type_intent = getIntent();
+        book_type = book_type_intent.getIntExtra("book_type", 0);
 
-            Log.d("isSearched_check", String.valueOf(gson.fromJson(json, Book.class).isSearchedBook));
+        if(book_type == 0){     // 읽은 책들 불러오기
+
+            book_type_textview.setText("읽은 책들");
+
+            // 쉐어드 프리퍼런스 열기.
+            SharedPreferences book_sharedpreference = getSharedPreferences("book_data", MODE_PRIVATE);
+            Collection<?> collection = book_sharedpreference.getAll().values();
+            Iterator<?> iter = collection.iterator();
+
+            while(iter.hasNext()){
+                Gson gson = new Gson();
+                String json = (String)iter.next();
+                books.add(gson.fromJson(json, Book.class));
+
+                Log.d("isSearched_check", String.valueOf(gson.fromJson(json, Book.class).isSearchedBook));
+            }
+
+        } else if(book_type == 1){      // 읽고 싶은 책들 불러오기
+
+            book_type_textview.setText("읽고 싶은 책들");
+
+            // 쉐어드 프리퍼런스 열기.
+            SharedPreferences book_sharedpreference = getSharedPreferences("wanted_book_data", MODE_PRIVATE);
+            Collection<?> collection = book_sharedpreference.getAll().values();
+            Iterator<?> iter = collection.iterator();
+
+            while(iter.hasNext()){
+                Gson gson = new Gson();
+                String json = (String)iter.next();
+                books.add(gson.fromJson(json, Book.class));
+
+                Log.d("isSearched_check", String.valueOf(gson.fromJson(json, Book.class).isSearchedBook));
+            }
+
+
         }
+
+        // 쉐어드 프리퍼런스 저장되어있는거 객체로 바꾸는 코드가 아직 불안정해서 다른 코드 주석처리 해 놓음
 //        Map<String, ?> allEntries = book_sharedpreference.getAll();
 //        for(Map.Entry<String, ?> entry : allEntries.entrySet()){
 //            Gson gson = new Gson();
@@ -57,25 +94,11 @@ public class CollectedBooksActivity extends AppCompatActivity {
 //            books.add(entry.getValue(key));
 //        }
 
-
-
-        Intent category = getIntent();
-        String receive_category = category.getStringExtra("category");
-
-//        // books 초기화
-//        InitializeBookData();
-
-        ImageButton back_btn = findViewById(R.id.back_btn);
-        TextView category_name = findViewById(R.id.collected_books_category);
-        ImageButton add_book_btn = findViewById(R.id.add_book_btn);
-
-        category_name.setText(receive_category);
-
         RecyclerView books_recyclerview = findViewById(R.id.recyclerview_books);
         books_recyclerview.setLayoutManager(new GridLayoutManager(this, 3));
         books_recyclerview.addItemDecoration(new DividerItemDecoration(books_recyclerview.getContext(), 1));
 
-        final CollectedBooksAdapter recyclerview_book_adapter = new CollectedBooksAdapter(this, books);
+        final CollectedBooksAdapter recyclerview_book_adapter = new CollectedBooksAdapter(this, books, book_type);
         books_recyclerview.setAdapter(recyclerview_book_adapter);
 
         back_btn.setOnClickListener(new View.OnClickListener() {
@@ -92,6 +115,7 @@ public class CollectedBooksActivity extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), AddReadBookActivity.class);
                     intent.putExtra("Book", new Book());
                     startActivity(intent);
+//                    startActivityForResult(intent, REQUEST_ADD_BOOK);
 
                 }else{      // 읽고 싶은 책 추가 액티비티로 이동.
                     Intent intent = new Intent(getApplicationContext(), AddWantReadBookActivity.class);
@@ -104,56 +128,5 @@ public class CollectedBooksActivity extends AppCompatActivity {
 
     }
 
-    public void InitializeBookData() {
 
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//        books.add(new Book("샘플", "image", "가", "100", "가", "0", "가", 3.5, 2020, 06, "소설", "가"));
-//
-
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-
-
-    }
 }

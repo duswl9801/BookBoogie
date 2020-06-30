@@ -1,20 +1,21 @@
-package com.reading_app.bookboogie;
+package com.reading_app.bookboogie.unused;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.reading_app.bookboogie.AddReadBookActivity;
+import com.reading_app.bookboogie.R;
 
 import java.util.ArrayList;
 
@@ -25,7 +26,7 @@ public class ReadBooksCategoriesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_read_books_categories);
+        setContentView(R.layout.old_activity_read_books_categories);
 
         // 카테고리 데이터 리스트 생성.
         final ArrayList<String> categories = new ArrayList<>();
@@ -72,7 +73,7 @@ public class ReadBooksCategoriesActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(ReadBooksCategoriesActivity.this);
-                View view = LayoutInflater.from(ReadBooksCategoriesActivity.this).inflate(R.layout.dialog_add_category, null, false);
+                View view = LayoutInflater.from(ReadBooksCategoriesActivity.this).inflate(R.layout.old_dialog_add_category, null, false);
                 builder.setView(view);
 
                 final EditText category_name = (EditText)view.findViewById(R.id.inputCategoryName);

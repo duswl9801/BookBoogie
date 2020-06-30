@@ -74,19 +74,18 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="610dp"
+        android:layout_height="590dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/display_num_textview"
+        app:layout_constraintVertical_bias="1.0">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="110dp"
-            android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"

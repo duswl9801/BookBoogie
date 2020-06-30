@@ -2,6 +2,8 @@
 
     <string name="app_name">BookBoogie</string>
     <string name="chooser_title">사용할 카메라 어플을 선택하세요</string>
+    
+    <string name="blank">빈 칸</string>
 
     <string name="category_all">전체보기</string>
     <string name="category_novel">소설</string>

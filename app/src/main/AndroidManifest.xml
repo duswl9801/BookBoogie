@@ -21,10 +21,10 @@
 
         <activity android:name=".LoadingActivity"></activity>
 
-        <activity android:name=".ReadBooksCategoriesActivity"></activity>
+        <activity android:name=".unused.ReadBooksCategoriesActivity"></activity>
         <activity android:name=".AddReadBookActivity"></activity>
 
-        <activity android:name=".WantReadCategoriesActivity"></activity>
+        <activity android:name=".unused.WantReadCategoriesActivity"></activity>
         <activity android:name=".AddWantReadBookActivity"></activity>
 
         <activity android:name=".SavedPassageListsActivity"></activity>
@@ -37,13 +37,14 @@
 <!--        <activity android:name=".ProfileActivity"></activity>-->
         <activity android:name=".ISBNScanActivity"></activity>
         <activity android:name=".CollectedBooksActivity"></activity>
-        <activity android:name=".BookSearchActivity"></activity>
+        <activity android:name=".BookSearchActivity" android:windowSoftInputMode="adjustPan"></activity>
         <activity android:name=".ScanActivity"></activity>
         <activity android:name=".BarcodeReader"></activity>
         <activity android:name=".DirectAddDialogActivity" android:theme="@style/Theme.DirectAddDialog" ></activity>
         <activity android:name=".NoResultDialogActivity" android:theme="@style/Theme.DirectAddDialog"></activity>
         <activity android:name=".SplashActivity"></activity>
-        <activity android:name=".BookCheckActivity"></activity>
+        <activity android:name=".ReadBookCheckActivity"></activity>
+        <activity android:name=".WantReadBookCheckActivity"></activity>
 
     </application>
 

@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -25,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
-import java.net.URI;
 import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -35,7 +33,7 @@ public class CollectedBooksAdapter extends RecyclerView.Adapter<CollectedBooksAd
     ArrayList<Book> books;
     Context my_context;
     Book book;
-
+    int book_type = 0;
     String img_string;
     Bitmap img_bitmap;
 
@@ -53,17 +51,22 @@ public class CollectedBooksAdapter extends RecyclerView.Adapter<CollectedBooksAd
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Toast.makeText(my_context, book.getImage().toString(), Toast.LENGTH_SHORT);
-//                    Toast.makeText(my_context, book.getMemo(), Toast.LENGTH_SHORT);
-//                    Toast.makeText(my_context, String.valueOf(book.getRating()), Toast.LENGTH_SHORT);
-
-                    Log.d("book_url", books.get(getAdapterPosition()).getImage().toString());
+                if( book_type == 0){
+                    Log.d("book_url", books.get(getAdapterPosition()).getImage());
                     Log.d("book_url", "0");
                     Log.d("book_url", String.valueOf(books.get(getAdapterPosition()).isSearchedBook));
 
-                    Intent intent = new Intent(my_context, BookCheckActivity.class);
-                    intent.putExtra("BookData", books.get(getAdapterPosition()));
+                    Intent intent = new Intent(my_context, ReadBookCheckActivity.class);
+                    intent.putExtra("BookData", books.get(getAdapterPosition()).title);
                     my_context.startActivity(intent);
+                }
+                else if (book_type == 1){
+                    Intent intent = new Intent(my_context, WantReadBookCheckActivity.class);
+                    intent.putExtra("BookData", books.get(getAdapterPosition()).title);
+                    my_context.startActivity(intent);
+                }
+
+
                 }
             });
 
@@ -103,11 +106,19 @@ public class CollectedBooksAdapter extends RecyclerView.Adapter<CollectedBooksAd
                             public void onClick(View v) {
 
                                 // 쉐어드 프리퍼런스에서 먼저 삭제
-                                // 쉐어드 프리퍼런스 열기.
-                                SharedPreferences pref = my_context.getSharedPreferences("book_data", MODE_PRIVATE);
-                                SharedPreferences.Editor editor = pref.edit();
-                                editor.remove(books.get(getAdapterPosition()).title);
-                                editor.commit();
+                                if(book_type == 0){
+                                    // 쉐어드 프리퍼런스 열기.
+                                    SharedPreferences pref = my_context.getSharedPreferences("book_data", MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = pref.edit();
+                                    editor.remove(books.get(getAdapterPosition()).title);
+                                    editor.commit();
+
+                                } else if(book_type == 1){
+                                    SharedPreferences pref = my_context.getSharedPreferences("wanted_book_data", MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = pref.edit();
+                                    editor.remove(books.get(getAdapterPosition()).title);
+                                    editor.commit();
+                                }
 
                                 books.remove(getAdapterPosition());
                                 notifyItemRemoved(getAdapterPosition());
@@ -134,9 +145,10 @@ public class CollectedBooksAdapter extends RecyclerView.Adapter<CollectedBooksAd
 
     }
 
-    CollectedBooksAdapter(Context context, ArrayList<Book> books){
+    CollectedBooksAdapter(Context context, ArrayList<Book> books, int book_type){
         my_context = context;
         this.books = books;
+        this.book_type = book_type;
     }
 
     @NonNull
@@ -159,14 +171,6 @@ public class CollectedBooksAdapter extends RecyclerView.Adapter<CollectedBooksAd
 
         Log.d("uri_check", book.getImage().toString());
 
-//        if(book_uri.toString().equals("image")){// 이미지 없을 경우
-//            holder.book_imgview.setImageResource(R.drawable.book_cover_book);
-//        }else {
-//            //todo 글라이드 쓰는거로 바꿔야함.
-////            holder.book_imgview.setImageURI(book_uri);
-//            Uri book_uri = book.getImage();
-//            Glide.with(my_context).load(book_uri).into(holder.book_imgview);
-//        }
 
         if(book.isSearchedBook == true){     // 책의 이미지가 uri이 스트링으로 저장됨.
 

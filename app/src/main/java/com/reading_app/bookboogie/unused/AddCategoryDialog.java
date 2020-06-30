@@ -47,10 +47,10 @@ public class AddCategoryDialog extends DialogFragment implements View.OnClickLis
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 //        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View view = inflater.inflate(R.layout.dialog_add_category, null);
+        View view = inflater.inflate(R.layout.old_dialog_add_category, null);
         catrgoryName = (EditText) view.findViewById(R.id.inputCategoryName);
 
-        builder.setView(inflater.inflate(R.layout.dialog_add_category, null))
+        builder.setView(inflater.inflate(R.layout.old_dialog_add_category, null))
 
 
                 .setPositiveButton("추가", new DialogInterface.OnClickListener() {

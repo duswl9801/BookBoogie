@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -36,10 +37,10 @@
             app:srcCompat="@drawable/forward_page_black" />
 
         <TextView
-            android:id="@+id/textView24"
+            android:id="@+id/top_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="수정필요"
+            android:text="@string/blank"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -155,7 +156,6 @@
         app:layout_constraintVertical_bias="0.0"/>
 
 
-
     <TextView
         android:id="@+id/memo"
         android:layout_width="wrap_content"
@@ -175,6 +175,7 @@
         app:layout_constraintVertical_bias="0.0"/>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
         android:layout_width="350dp"
         android:layout_height="150dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -192,7 +193,17 @@
             android:textCursorDrawable="@android:color/transparent" />
     </com.google.android.material.textfield.TextInputLayout>
 
-
+    <TextView
+        android:id="@+id/today"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:text="2020.06"
+        app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
+        app:layout_constraintStart_toEndOf="@+id/month"
+        app:layout_constraintTop_toBottomOf="@+id/ratingBar"
+        app:layout_constraintVertical_bias="0.317" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,7 +8,8 @@ import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.reading_app.bookboogie.unused.OldBookSearchActivity;
+import com.reading_app.bookboogie.unused.ReadBooksCategoriesActivity;
+import com.reading_app.bookboogie.unused.WantReadCategoriesActivity;
 
 public class AnotherMainActivity extends AppCompatActivity {
 

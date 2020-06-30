@@ -1,10 +1,8 @@
-package com.reading_app.bookboogie;
+package com.reading_app.bookboogie.unused;
 
-import androidx.appcompat.app.AlertDialog;
-
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,16 +16,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.reading_app.bookboogie.CollectedBooksActivity;
+import com.reading_app.bookboogie.R;
+
 import java.util.ArrayList;
 
-// TODO 책 모아진 액티비티로 이동할 때 카테고리와 책 정보 전달해 주어야 함.
-public class ReadBooksCategoriesAdapter extends RecyclerView.Adapter<ReadBooksCategoriesAdapter.CategoryViewHolder> {
+public class WantReadCategoriesAdapter extends RecyclerView.Adapter<WantReadCategoriesAdapter.CategoryViewHolder> {
 
     // 책 카테고리가 들어갈 어레이리스트. 기본적인것은 strings.xml에 선언되어 있고 사용자가 추가 수정 삭제 가능.
     ArrayList<String> catrgories;
     Context my_context;
 
-    // 아이템마다 컨텍스트 메뉴를 사용하기 위해 RecyclerView.ViewHolder를 상속받은 클래스에서 OnCreateContextMenuListener를 구현해야 함.
     public class CategoryViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
         TextView category_textview;
@@ -43,9 +42,7 @@ public class ReadBooksCategoriesAdapter extends RecyclerView.Adapter<ReadBooksCa
                     intent.putExtra("category", catrgories.get(getAdapterPosition()));
                     my_context.startActivity(intent);
 
-
                     // ---------------------------여기서 데이터도 전달해 주어야함. 필요한 데이터: 카테고리 이름과 책들 어레이리스트
-
 
                 }
             });
@@ -57,15 +54,12 @@ public class ReadBooksCategoriesAdapter extends RecyclerView.Adapter<ReadBooksCa
 
         }
 
-        // 컨텍스트 메뉴를 생성하고 메뉴 선택시 호출되는 리스너를 등록해줌. id 0, 1로 어떤 메뉴를 선택했는지 리스너에서 구분하게 됨.
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-
             MenuItem category_edit = menu.add(Menu.NONE, 0, Menu.NONE, "수정하기");
             MenuItem category_delete = menu.add(Menu.NONE, 1, Menu.NONE, "삭제하기");
             category_edit.setOnMenuItemClickListener(onEditMenu);
             category_delete.setOnMenuItemClickListener(onEditMenu);
-
         }
 
         MenuItem.OnMenuItemClickListener onEditMenu = new MenuItem.OnMenuItemClickListener() {
@@ -75,7 +69,7 @@ public class ReadBooksCategoriesAdapter extends RecyclerView.Adapter<ReadBooksCa
                     case 0: // 수정하기 항목 선택
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(my_context);
-                        View view = LayoutInflater.from(my_context).inflate(R.layout.dialog_edit_category, null, false);
+                        View view = LayoutInflater.from(my_context).inflate(R.layout.old_dialog_edit_category, null, false);
                         builder.setView(view);
 
                         final EditText edited_category_name = (EditText)view.findViewById(R.id.editedCategoryName);
@@ -113,17 +107,14 @@ public class ReadBooksCategoriesAdapter extends RecyclerView.Adapter<ReadBooksCa
                         break;
 
                     case 1: // 삭제하기 항목 선택
-
-                        Log.d("RBCA", "삭제하기 버튼 클릭");
-
-                        AlertDialog.Builder dialog_builder = new AlertDialog.Builder(my_context);
+                        androidx.appcompat.app.AlertDialog.Builder dialog_builder = new androidx.appcompat.app.AlertDialog.Builder(my_context);
                         View dialog_view = LayoutInflater.from(my_context).inflate(R.layout.dialog_check_delete, null, false);
                         dialog_builder.setView(dialog_view);
 
                         final Button delete_btn = (Button)dialog_view.findViewById(R.id.delete_btn);
                         final Button cancle_btn = (Button)dialog_view.findViewById(R.id.cancle_btn);
 
-                        final AlertDialog check_delete_dialog = dialog_builder.create();
+                        final androidx.appcompat.app.AlertDialog check_delete_dialog = dialog_builder.create();
 
                         delete_btn.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -151,18 +142,16 @@ public class ReadBooksCategoriesAdapter extends RecyclerView.Adapter<ReadBooksCa
                 return true;
             }
         };
+
+
     }
 
-
-    // 어댑터는 액티비티가 아니기 때문에 이 어댑터를 쓰는 액티비티에서 context를 받아와야 함.
-    // 다이얼로그 인플레이트 할때 context 필요.
-//    ReadBooksCategoriesAdapter(ArrayList<String> catrgories){this.catrgories = catrgories;}
-    ReadBooksCategoriesAdapter(Context context, ArrayList<String> catrgories){
+//    WantReadCategoriesAdapter(ArrayList<String> catrgories){this.catrgories = catrgories;}
+    WantReadCategoriesAdapter(Context context, ArrayList<String> categories){
         my_context = context;
-        this.catrgories = catrgories;
+        this.catrgories = categories;
     }
 
-    // 위에서 만든 뷰홀더 객체화하는 메소드
     @NonNull
     @Override
     public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -170,19 +159,16 @@ public class ReadBooksCategoriesAdapter extends RecyclerView.Adapter<ReadBooksCa
         LayoutInflater layout_inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View view = layout_inflater.inflate(R.layout.item_category, parent, false);
-        CategoryViewHolder categoryViewHolder = new CategoryViewHolder(view);
+        WantReadCategoriesAdapter.CategoryViewHolder categoryViewHolder = new WantReadCategoriesAdapter.CategoryViewHolder(view);
 
         return categoryViewHolder;
     }
 
-    // position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시
     @Override
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
-
         String category = catrgories.get(position);
 
         holder.category_textview.setText(category);
-
     }
 
     @Override

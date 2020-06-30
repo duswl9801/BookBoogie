@@ -560,6 +560,12 @@ public class BookSearchActivity extends AppCompatActivity {
 
     }
 
+    public void onPause() {
+        super.onPause();
+
+        timer.cancel();
+    }
+
     // 네이버 검색 open api 이용. 책 검색하는 메소드.
     public ArrayList<Book> searchBook(String search_term){ // 검색어 search_term
 

@@ -40,15 +40,16 @@ public class AddReadBookActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1001;
     private static final int CAPTURE_IMAGE = 0;
     private static final int PICK_FROM_ALBUM = 1;
-//    private File tempFile;
+
+    // onActivityRedult에서도 쓰이기 때문에 static으로 선언함.
     private static ImageButton addBookImgBtn;
+
     Bitmap bitmap;
     Book book;
 
     String bitmap_to_string;
 
     int readYear = 0, readMonth = 0, readDay = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,10 +81,11 @@ public class AddReadBookActivity extends AppCompatActivity {
         ImageButton backBtn = findViewById(R.id.backBtn);
         Button saveBtn = findViewById(R.id.saveBtn);
         addBookImgBtn = findViewById(R.id.addBookImg);
+
+        // saveBtn누를 때, 이 뷰들 안에 있는 값들을 가져와야 하기 때문에 final로 선언
         final EditText title = findViewById(R.id.book_title_editview);
         final RatingBar ratingBar = findViewById(R.id.ratingBar);
         final TextView day = findViewById(R.id.day);
-//        Button categoryBtn = findViewById(R.id.categoryBtn);
         final EditText memo = findViewById(R.id.memoText);
 
 //        EditText title = findViewById(R.id.titleText);
@@ -114,21 +116,14 @@ public class AddReadBookActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 selecteDay();
-//                Log.i("Day", String.valueOf(readYear + readMonth + readDay));
-//                Toast.makeText(getApplicationContext(), readYear+"."+readMonth+"."+readDay, Toast.LENGTH_SHORT).show();
 
-//                TextView day = findViewById(R.id.day);
-//                day.setText(book.readYear+"."+book.readMonth+"."+book.readDay);
-//                day.setText(readYear+"."+readMonth+"."+readDay);
             }
 
         });
 
 //         save 버튼을 눌렀을때 Book 클래스의 객체가 전달 되어야 함. 계속 객체에 null이 들어가 있다고 에러가 뜸.
-        // 저장버튼을 누르면 쉐어드 프리퍼런스에 입력한 값 저장해야 함.
-        // 화면에 있는 값들 다 받아서 책
+        // 저장버튼을 누르면 읽은 책들 쉐어드 프리퍼런스에 입력한 값 저장해야 함.
         saveBtn.setOnClickListener(new View.OnClickListener(){
-
             @Override
             public void onClick(View v) {
 
@@ -137,8 +132,8 @@ public class AddReadBookActivity extends AppCompatActivity {
                 Book input_book = new Book();
 
 //////////////////////////////////////이미지 버튼의 이미지를 저장하는게 잘못됨.
-//                if(book.isSearchedBook = true){       // 검색해서 저장하는 책일때
-                if(book.isSearchedBook == true){       // 검색해서 저장하는 책일때
+//                if(book.isSearchedBook = true){       // 검색해서 저장하는 책일 때
+                if(book.isSearchedBook == true){       // 검색해서 저장하는 책일 때
 
                         input_book.setImage(book.getImage());
                 }
@@ -177,16 +172,6 @@ public class AddReadBookActivity extends AppCompatActivity {
                 Log.d("searched_book_check", String.valueOf(input_book.isSearchedBook));
 
                 finish();
-//                book.img = bitmap;
-//                book.title = title.getText().toString();
-//                book.rating = ratingBar.getRating();
-//                book.memo = memo.getText().toString();
-//
-//                Intent intent = new Intent(getApplicationContext(), ReadBooksCategoriesActivity.class);
-//
-//                intent.putExtra("Book", book);
-//
-//                startActivity(intent);
 
             }
 
@@ -255,8 +240,6 @@ public class AddReadBookActivity extends AppCompatActivity {
 
                     // 인텐트를 실행할 수 있는 액티비티가 1개 이상일 때 실행하도록 함.
                     if(intent.resolveActivity(getPackageManager()) != null){
-//                        startActivity(chooser);
-                        // (intent, requestCode)
                         startActivityForResult(chooser, CAPTURE_IMAGE);
                     }
 
@@ -279,11 +262,9 @@ public class AddReadBookActivity extends AppCompatActivity {
 
                     Log.d("searched", "book.isSearchedBook is " + book.isSearchedBook);
                 }
-//                String selectedText = items[which].toString();
-//                Toast.makeText(AddReadBookActivity.this, selectedText, Toast.LENGTH_SHORT).show();
+
             }
         });
-//        getImgDialog.create();// 이거만 있으면 dialog 뜨지 않음.
         getImgDialog.show();
     }
 
@@ -313,84 +294,50 @@ public class AddReadBookActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
-// switch코드 쓰는게 훨씬 직관적
-        if(requestCode == CAPTURE_IMAGE){
-            book.isSearchedBook = false;
 
-            bitmap = (Bitmap) data.getExtras().get("data");
-            Log.d("searched", "book.isSearchedBook is " + book.isSearchedBook);
+        switch (requestCode){
+            case CAPTURE_IMAGE:
 
-            if(bitmap != null){
-                // 사이즈 조절은 나중에
-                addBookImgBtn.setImageBitmap(bitmap);
-//                addBookImgBtn.get
-//                addBookImgBtn.getBackground(bitmap);
-            }
-            else{
+                if(resultCode == RESULT_OK){        // 카메라로 사진을 가져왔을때
 
-            }
-        }
+                    book.isSearchedBook = false;
 
-        if (requestCode == PICK_FROM_ALBUM) {
+                    bitmap = (Bitmap) data.getExtras().get("data");
 
-//            InputStream in = null;
-            InputStream in = null;
+                    if(bitmap != null){
+                        // 사이즈 조절은 나중에
+                        addBookImgBtn.setImageBitmap(bitmap);
+                    }
 
-            try{
-                in = getContentResolver().openInputStream(data.getData());
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+                }
 
-            bitmap = BitmapFactory.decodeStream(in);
-            book.isSearchedBook = false;
-            addBookImgBtn.setImageBitmap(bitmap);
+                break;
 
-            Log.d("searched", "book.isSearchedBook is " + book.isSearchedBook);
+            case PICK_FROM_ALBUM:
 
-//            Uri photoUri = data.getData();
-//            Cursor cursor = null;
-//
-//            try {
-//
-//                /*
-//                 *  Uri 스키마를
-//                 *  content:/// 에서 file:/// 로  변경한다.
-//                 */
-//                String[] proj = { MediaStore.Images.Media.DATA };
-//
-//                assert photoUri != null;
-//                cursor = getContentResolver().query(photoUri, proj, null, null, null);
-//
-//                assert cursor != null;
-//                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-//
-//                cursor.moveToFirst();
-//
-//                tempFile = new File(cursor.getString(column_index));
-//
-//            } finally {
-//                if (cursor != null) {
-//                    cursor.close();
-//                }
-//            }
-//
-//            setImage();
+                if(resultCode == RESULT_OK) {        // 카메라로 사진을 가져왔을때
 
+                    book.isSearchedBook = false;
+
+                    InputStream in = null;
+
+                    try{
+                        in = getContentResolver().openInputStream(data.getData());
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                    bitmap = BitmapFactory.decodeStream(in);
+
+                    addBookImgBtn.setImageBitmap(bitmap);
+
+                }
+
+                break;
         }
 
     }
 
-//    private void setImage() {
-//
-//        ImageButton imageView = findViewById(R.id.addBookImg);
-//
-//        BitmapFactory.Options options = new BitmapFactory.Options();
-//        Bitmap originalBm = BitmapFactory.decodeFile(tempFile.getAbsolutePath(), options);
-//
-//        imageView.setImageBitmap(originalBm);
-//
-//    }
 
     // 비트맵 이미지를 문자열로 변환시켜주는 메소드.
     public String getBase64String(Bitmap bitmap)
