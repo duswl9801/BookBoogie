@@ -60,8 +60,6 @@ public class MainActivity extends AppCompatActivity {
         // 책의 바코드(isbn)을 찍어서 정보를 가져올 수 있게하는 카메라 버튼.
         ImageButton camera_btn = findViewById(R.id.camera_btn);
 
-        setCounts();
-
         // 사용자가 원하는 기능의 화면 클릭했을 때, 해당 액티비티로 이동
         read_books_container.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,6 +130,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    /*
+     여기서 저장된 책들의 개수 세서 textview에 나타내야 함.
+     책 추가하는 액티비티 갔다가 메인 돌아왔을때 저장된 책의 개수 늘어나야 하기 때문
+     */
+    public void onResume() {
+        super.onResume();
+        setCounts();
     }
 
     public void setCounts(){
