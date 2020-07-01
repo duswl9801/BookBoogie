@@ -219,10 +219,11 @@ public class CalenderActivity extends AppCompatActivity {
 
          /*
           그래프 나타나는 속도 조절하는 코드.
+          빠르게 차트 확인하기위해 1초만에 차트 보여지도록 설정함.
           animateY는 y축으로 위로 올라와지는 메소드고
           animateX는 x축마다 하나씩 나옴
          */
-        read_book_barchart.animateY(2000);
+        read_book_barchart.animateY(1000);
 
         /*
          x축과 데이터 셋을 묶어서 바 데이터에 넣음.

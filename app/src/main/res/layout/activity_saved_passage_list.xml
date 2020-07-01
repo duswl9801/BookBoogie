@@ -29,7 +29,7 @@
         app:layout_constraintVertical_bias="0.0">
 
         <ImageButton
-            android:id="@+id/imageButton8"
+            android:id="@+id/add_passage_btn"
             android:layout_width="50dp"
             android:layout_height="0dp"
             android:layout_marginEnd="8dp"

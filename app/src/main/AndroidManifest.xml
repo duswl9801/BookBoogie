@@ -20,19 +20,13 @@
         </activity>
 
         <activity android:name=".LoadingActivity"></activity>
-
         <activity android:name=".unused.ReadBooksCategoriesActivity"></activity>
         <activity android:name=".AddReadBookActivity"></activity>
-
         <activity android:name=".unused.WantReadCategoriesActivity"></activity>
         <activity android:name=".AddWantReadBookActivity"></activity>
-
         <activity android:name=".SavedPassageListsActivity"></activity>
-
         <activity android:name=".CalenderActivity"></activity>
-
         <activity android:name=".DictionaryActivity"></activity>
-
         <activity android:name=".AnotherMainActivity"></activity>
 <!--        <activity android:name=".ProfileActivity"></activity>-->
         <activity android:name=".ISBNScanActivity"></activity>
@@ -45,6 +39,8 @@
         <activity android:name=".SplashActivity"></activity>
         <activity android:name=".ReadBookCheckActivity"></activity>
         <activity android:name=".WantReadBookCheckActivity"></activity>
+        <activity android:name=".ChoicePassageImgActivity"></activity>
+        <activity android:name=".ImgCanvasActivity"></activity>
 
     </application>
 

@@ -199,7 +199,7 @@
                             android:layout_marginStart="16dp"
                             android:layout_marginLeft="16dp"
                             android:layout_marginTop="16dp"
-                            android:text="달력"
+                            android:text="통계"
                             android:textColor="@android:color/background_light"
                             android:textSize="30sp"
                             android:textStyle="bold"

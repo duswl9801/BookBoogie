@@ -31,6 +31,7 @@ public class YearMonthPickerDialog extends DialogFragment {
         this.listener = listener;
     }
 
+    Button all_book_btn;
     Button confirm_btn;
     Button cancel_btn;
 
@@ -43,6 +44,7 @@ public class YearMonthPickerDialog extends DialogFragment {
 
         View year_month_pick_dialog = inflater.inflate(R.layout.dialog_year_month_pick, null);
 
+        all_book_btn = year_month_pick_dialog.findViewById(R.id.all_book_btn);
         confirm_btn = year_month_pick_dialog.findViewById(R.id.confirm_btn);
         cancel_btn = year_month_pick_dialog.findViewById(R.id.cancel_btn);
 

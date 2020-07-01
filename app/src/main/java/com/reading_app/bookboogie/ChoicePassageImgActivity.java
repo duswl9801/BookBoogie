@@ -2,7 +2,6 @@ package com.reading_app.bookboogie;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,60 +14,40 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.RatingBar;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
-
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
 
-public class AddReadBookActivity extends AppCompatActivity {
+public class ChoicePassageImgActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1001;
     private static final int CAPTURE_IMAGE = 0;
     private static final int PICK_FROM_ALBUM = 1;
 
-    // onActivityRedult에서도 쓰이기 때문에 static으로 선언함.
-    private static ImageButton addBookImgBtn;
-    Button month_btn;
+    // xml 파일의 속성들 선언
+    ImageButton back_btn;
+    Button pick_img_btn;
+    ImageView picked_img;
+    Button highlight_img_btn;
 
-    Bitmap bitmap;
-    Book book;
-
-    String bitmap_to_string;
-
-    int read_year = 0, read_month = 0;
-
-    // 읽은 월 추가 버튼을 눌러서 확인 버튼을 누르면 이 리스너가 실행됨.
-    // 다이얼로그에서 선택된 년도, 월 값 받아서 버튼에 세팅.
-    DatePickerDialog.OnDateSetListener month_picker_listener = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-
-            read_year = year;
-            read_month = month;
-
-            month_btn.setText(String.valueOf(read_year) + "." + String.valueOf(read_month));
-        }
-    };
+    // 카메라나 갤러리로 사진 받아서 이미지뷰에 맞게 사이즈 변환한 이미지
+    Bitmap resized_img;
+    // 이미지를 스트링으로 변환해서 저장하는 변수. 쉐어드 프리퍼런스에 저장하기 위해 사용.
+    String str_img;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_read_book);
+        setContentView(R.layout.activity_choice_passage_img);
 
         int permssionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
 
@@ -88,109 +67,32 @@ public class AddReadBookActivity extends AppCompatActivity {
             }
         }
 
-        // 책 정보 들어있는 인텐트 받기. 제목이 "title"이면 사용자가 직접 입력하는 경우.
-        Intent book_data = getIntent();
-        book = (Book)book_data.getSerializableExtra("Book");
+        back_btn = findViewById(R.id.backBtn);
+        pick_img_btn = findViewById(R.id.pick_img_btn);
+        picked_img = findViewById(R.id.picked_img);
+        highlight_img_btn = findViewById(R.id.highlight_img_btn);
 
-        ImageButton backBtn = findViewById(R.id.backBtn);
-        Button saveBtn = findViewById(R.id.saveBtn);
-        addBookImgBtn = findViewById(R.id.addBookImg);
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
-        // saveBtn누를 때, 이 뷰들 안에 있는 값들을 가져와야 하기 때문에 final로 선언
-        final EditText title = findViewById(R.id.book_title_editview);
-        final RatingBar ratingBar = findViewById(R.id.ratingBar);
-        month_btn = findViewById(R.id.input_month);
-        final EditText memo = findViewById(R.id.memoText);
-
-        if(book.getTitle().equals("title")){    // 사용자가 직접 책 추가하는 경우
-            book.isSearchedBook = false;
-        } else {        // 책 정보 받아와서 추가하는 경우
-
-            title.setText(book.getTitle());
-            // 커서 맨 마지막으로 놓기
-            title.setSelection(title.length());
-            Glide.with(this).load(book.getImage()).override(400, 600).into(addBookImgBtn);
-
-        }
-
-        addBookImgBtn.setOnClickListener(new View.OnClickListener() {
+        pick_img_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getImgDialog();
             }
         });
 
-        month_btn.setOnClickListener(new View.OnClickListener() {
+        highlight_img_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                YearMonthPickerDialog year_month_pick_dialog = new YearMonthPickerDialog();
-                year_month_pick_dialog.setListener(month_picker_listener);
-                year_month_pick_dialog.show(getSupportFragmentManager(), "YearMonthPicker");
+                Intent intent = new Intent(getApplicationContext(), ImgCanvasActivity.class);
+                startActivity(intent);
 
-            }
-
-        });
-
-//         save 버튼을 눌렀을때 Book 클래스의 객체가 전달 되어야 함. 계속 객체에 null이 들어가 있다고 에러가 뜸.
-        // 저장버튼을 누르면 읽은 책들 쉐어드 프리퍼런스에 입력한 값 저장해야 함.
-        saveBtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-
-                Log.d("searched", "book.isSearchedBook is " + book.isSearchedBook);
-
-                Book input_book = new Book();
-
-                if(book.isSearchedBook == true){       // 검색해서 저장하는 책일 때
-
-                        input_book.setImage(book.getImage());
-                }
-                else{
-
-                    Log.d("searched", "book.isSearched이 false일때 코드");
-
-                    // 저장되는건 input_book이라서 얘의 isSrarchedBook을 false로 바꿨어야 했는데 안바꿔서 직접저장할때 이미지가 안떴었음.
-                    input_book.isSearchedBook = false;
-
-                    // 비트맵 이미지를 문자열로 바꿔서 저장.
-                    bitmap_to_string = getBase64String(bitmap);
-                    input_book.setImage(bitmap_to_string);
-
-                }
-                input_book.setTitle(title.getText().toString());
-                input_book.setRating(ratingBar.getRating());
-                input_book.setReadYear(read_year);
-                input_book.setReadMonth(read_month);
-                input_book.setMemo(memo.getText().toString());
-
-                Log.d("BookDataCheck", input_book.getImage().toString());
-                Log.d("BookDataCheck", String.valueOf(input_book.getRating()));
-
-                SharedPreferences read_book_sharedpreference = getSharedPreferences("book_data", MODE_PRIVATE);
-                SharedPreferences.Editor book_editor = read_book_sharedpreference.edit();
-
-                // gson이용해서 책 객체를 스트링으로 바꿈.
-                Gson gson = new Gson();
-                String book_to_string = gson.toJson(input_book);
-
-                // 바꾼 스트링 에디터로 쉐어드 프리퍼런스에 저장.
-                book_editor.putString(input_book.title, book_to_string);
-                book_editor.commit();
-
-                Toast.makeText(AddReadBookActivity.this, "저장 성공", Toast.LENGTH_SHORT).show();
-
-                Log.d("searched_book_check", String.valueOf(input_book.isSearchedBook));
-
-                finish();
-
-            }
-
-        });
-
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
+                //todo finsh()??????????????????????????????
             }
         });
 
@@ -222,7 +124,7 @@ public class AddReadBookActivity extends AppCompatActivity {
         ArrayList<String> getImgWay = new ArrayList<String>();
         getImgWay.add("카메라로 사진 촬영");
         getImgWay.add("앨범에서 불러오기");
-        getImgWay.add("기본 이미지로 설정하기");
+
         /*
         String 안쓰는 이유 onenote -> 안드로이드 -> 안드로이드 스튜디오에 있음.
         arraylist getImgWay를 문자열 array로 바꿈.
@@ -257,25 +159,16 @@ public class AddReadBookActivity extends AppCompatActivity {
                     intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
                     startActivityForResult(intent, PICK_FROM_ALBUM);
                 }
-                /*
-                기본 이미지 선택.
-                사진 찍거나 갤러리에서 이미지 가져올때와 같은 방식으로 사진 전해주려고 이미지 리소스를 비트맵으로 변환해서 저장.
-                 */
-                else {
-                    ImageButton addBookImgBtn = findViewById(R.id.addBookImg);
-
-                    bitmap = BitmapFactory.decodeResource(AddReadBookActivity.this.getResources(), R.drawable.book_cover_book);
-                    book.isSearchedBook = false;
-                    addBookImgBtn.setImageBitmap(bitmap);
-
-                    Log.d("searched", "book.isSearchedBook is " + book.isSearchedBook);
-                }
 
             }
         });
         getImgDialog.show();
     }
 
+    /*
+     카메라와 갤러리에서 이미지 가져와 사이즈 조절하고, 이미지뷰에 이미지 넣고
+     이미지를 문자열로 바꿔서 쉐어드 프리퍼런스에 저장함
+     */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -285,13 +178,24 @@ public class AddReadBookActivity extends AppCompatActivity {
 
                 if(resultCode == RESULT_OK){        // 카메라로 사진을 가져왔을때
 
-                    book.isSearchedBook = false;
 
-                    bitmap = (Bitmap) data.getExtras().get("data");
+                    Bitmap bitmap = (Bitmap) data.getExtras().get("data");
 
                     if(bitmap != null){
-                        // 사이즈 조절은 나중에
-                        addBookImgBtn.setImageBitmap(bitmap);
+
+                        // 사이즈 조절하고 이미지 뷰에 세팅하고 비트맵 스트링으로 바꾸기
+                        resized_img = Bitmap.createScaledBitmap(bitmap, 300, 400, true);
+                        picked_img.setImageBitmap(resized_img);
+
+                        str_img = getBase64String(resized_img);
+
+                        // 쉐어드에 저장하기
+                        SharedPreferences prefs = getSharedPreferences("canvas_img_data", MODE_PRIVATE);
+                        // 작성한다고 선언.
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putString("canvas_img", str_img);
+                        editor.commit();
+
                     }
 
                 }
@@ -306,8 +210,6 @@ public class AddReadBookActivity extends AppCompatActivity {
 
                 if(resultCode == RESULT_OK) {        // 앨범에서 사진을 가져왔을때
 
-                    book.isSearchedBook = false;
-
                     InputStream in = null;
 
                     try{
@@ -316,9 +218,20 @@ public class AddReadBookActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    bitmap = BitmapFactory.decodeStream(in);
+                    Bitmap bitmap = BitmapFactory.decodeStream(in);
 
-                    addBookImgBtn.setImageBitmap(bitmap);
+                    // 사진 크기 조절하고 이미지 뷰에 세팅하고 비트맵 스트링으로 바꾸기
+                    resized_img = Bitmap.createScaledBitmap(bitmap, 300, 400, true);
+                    picked_img.setImageBitmap(resized_img);
+
+                    str_img = getBase64String(resized_img);
+
+                    // 쉐어드에 저장하기
+                    SharedPreferences prefs = getSharedPreferences("canvas_img_data", MODE_PRIVATE);
+                    // 작성한다고 선언.
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("canvas_img", str_img);
+                    editor.commit();
 
                 }
                 else if(resultCode == RESULT_CANCELED)
@@ -331,8 +244,7 @@ public class AddReadBookActivity extends AppCompatActivity {
 
     }
 
-
-    // 비트맵 이미지를 문자열로 변환시켜주는 메소드.
+    // 비트맵 이미지를 문자열로 변환시켜주는 메드.
     public String getBase64String(Bitmap bitmap)
     {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -343,5 +255,7 @@ public class AddReadBookActivity extends AppCompatActivity {
 
         return Base64.encodeToString(imageBytes, Base64.NO_WRAP);
     }
+
+
 
 }
