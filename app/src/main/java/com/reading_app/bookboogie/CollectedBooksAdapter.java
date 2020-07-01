@@ -196,4 +196,9 @@ public class CollectedBooksAdapter extends RecyclerView.Adapter<CollectedBooksAd
     public int getItemCount() {
         return books.size();
     }
+
+    public void changeItem(){
+        notifyDataSetChanged();
+    }
+
 }

@@ -38,6 +38,9 @@ public class CollectedBooksActivity extends AppCompatActivity {
 
     int read_year = 0, read_month = 0;
 
+    RecyclerView books_recyclerview;
+    Button month_pick_btn;
+
 
     // 읽은 월 추가 버튼을 눌러서 확인 버튼을 누르면 이 리스너가 실행됨.
     // 다이얼로그에서 선택된 년도, 월 값 받아서 버튼에 세팅.
@@ -47,6 +50,7 @@ public class CollectedBooksActivity extends AppCompatActivity {
 
             read_year = year;
             read_month = month;
+            setRecyclerview(books, read_year, read_month);
 
         }
     };
@@ -60,7 +64,7 @@ public class CollectedBooksActivity extends AppCompatActivity {
         ImageButton back_btn = findViewById(R.id.back_btn);
         TextView book_type_textview = findViewById(R.id.book_type);
         ImageButton add_book_btn = findViewById(R.id.add_book_btn);
-        Button month_pick_btn = findViewById(R.id.month_pick_btn);
+        month_pick_btn = findViewById(R.id.month_pick_btn);
 
         // 메인에서 값 받아서 book_type가 0이면 읽은 책들에 저장되어있는 책을 보여주고
         // 1아면 읽고 싶은 책들에 저장되어 있는 책을 보여줌.
@@ -73,16 +77,24 @@ public class CollectedBooksActivity extends AppCompatActivity {
 
             // 쉐어드 프리퍼런스 열기.
             SharedPreferences book_sharedpreference = getSharedPreferences("book_data", MODE_PRIVATE);
-            Collection<?> collection = book_sharedpreference.getAll().values();
-            Iterator<?> iter = collection.iterator();
-
-            while(iter.hasNext()){
+            Map<String, ?> prefsMap = book_sharedpreference.getAll();
+            for(Map.Entry<String, ?> entry : prefsMap.entrySet()){
                 Gson gson = new Gson();
-                String json = (String)iter.next();
+                String json =  entry.getValue().toString();
                 books.add(gson.fromJson(json, Book.class));
 
-                Log.d("isSearched_check", String.valueOf(gson.fromJson(json, Book.class).isSearchedBook));
             }
+
+//            Collection<?> collection = book_sharedpreference.getAll().values();
+//            Iterator<?> iter = collection.iterator();
+//
+//            while(iter.hasNext()){
+//                Gson gson = new Gson();
+//                String json = (String)iter.next();
+//                books.add(gson.fromJson(json, Book.class));
+//
+//                Log.d("isSearched_check", String.valueOf(gson.fromJson(json, Book.class).isSearchedBook));
+//            }
 
         } else if(book_type == 1){      // 읽고 싶은 책들 불러오기
 
@@ -116,7 +128,7 @@ public class CollectedBooksActivity extends AppCompatActivity {
 //            books.add(entry.getValue(key));
 //        }
 
-        RecyclerView books_recyclerview = findViewById(R.id.recyclerview_books);
+        books_recyclerview = findViewById(R.id.recyclerview_books);
         books_recyclerview.setLayoutManager(new GridLayoutManager(this, 3));
         books_recyclerview.addItemDecoration(new DividerItemDecoration(books_recyclerview.getContext(), 1));
 
@@ -154,11 +166,52 @@ public class CollectedBooksActivity extends AppCompatActivity {
                 YearMonthPickerContainAllDialog year_month_pick_dialog = new YearMonthPickerContainAllDialog();
                 year_month_pick_dialog.setListener(month_picker_listener);
                 year_month_pick_dialog.show(getSupportFragmentManager(), "YearMonthPicker");
+//                setRecyclerview(books, read_year, read_month);
             }
         });
 
     }
 
+    public void setRecyclerview(ArrayList<Book> books, int year, int month){
+
+        // 선택된 달에 맞는 책들 넣을 어레이리스트
+        ArrayList<Book> year_selected_books = new ArrayList<>();
+        // 최종적으로 사용자가 선택한 년도와 월에 읽은 책들이 여기 들어감.
+        ArrayList<Book> month_selected_books = new ArrayList<>();
+
+        if(year == 0){
+            month_pick_btn.setText("전체보기");
+            CollectedBooksAdapter recyclerview_book_adapter = new CollectedBooksAdapter(this, books, book_type);
+            books_recyclerview.setAdapter(recyclerview_book_adapter);
+            recyclerview_book_adapter.changeItem();
+        } else {
+
+            month_pick_btn.setText(String.valueOf(year) + "." + String.valueOf(month));
+
+
+            // 1차로 사용자가 선택한 년도와 같은 년도에 읽은 책들 골라냄
+            for(int i = 0; i < books.size(); i++){
+                if(books.get(i).read_year == year) {
+                    year_selected_books.add(books.get(i));
+                }
+            }
+
+            // 마지막으로 읽은 월까지 같은 책들 골라내서 어댑터에 인자로 넘겨준다.
+            for(int i = 0; i < year_selected_books.size(); i++){
+                if(year_selected_books.get(i).read_month == month){
+                    month_selected_books.add(year_selected_books.get(i));
+                }
+            }
+
+            CollectedBooksAdapter recyclerview_book_adapter = new CollectedBooksAdapter(this, month_selected_books, book_type);
+            books_recyclerview.setAdapter(recyclerview_book_adapter);
+            recyclerview_book_adapter.changeItem();
+
+        }
+
+
+
+    }
 
 
 

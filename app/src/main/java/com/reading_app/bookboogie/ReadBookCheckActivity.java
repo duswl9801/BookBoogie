@@ -52,7 +52,7 @@ public class ReadBookCheckActivity extends AppCompatActivity {
         TextView book_title_textview = findViewById(R.id.book_title_textview);
         RatingBar rating_bar = findViewById(R.id.ratingBar);
         TextView year_month_textview = findViewById(R.id.year_month_textview);
-        TextInputEditText memo = findViewById(R.id.memoText);
+        TextView memo = findViewById(R.id.memoText);
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override

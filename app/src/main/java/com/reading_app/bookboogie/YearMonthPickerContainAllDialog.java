@@ -62,7 +62,7 @@ public class YearMonthPickerContainAllDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 // 사용자가 선택한 년도, 월 값 받음
-                listener.onDateSet(null, year_picker.getValue(), month_picker.getValue(), 0);
+                listener.onDateSet(null, 0, 0, 0);
                 YearMonthPickerContainAllDialog.this.getDialog().cancel();
             }
         });
