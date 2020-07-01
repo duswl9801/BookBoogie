@@ -112,97 +112,6 @@ public class BookSearchActivity extends AppCompatActivity {
         final SearchView book_search_view = findViewById(R.id.search_view);
         book_search_view.setQueryHint("책 검색하기");
 
-//        // 베스트 셀러 뷰들 객체화
-//        best_seller_container = findViewById(R.id.best_seller_container);
-//        final ImageView domestic_book_img = findViewById(R.id.domestic_book_img);
-//        final TextView domestic_book_title = findViewById(R.id.domestic_book_title);
-//        final TextView domestic_book_description = findViewById(R.id.domestic_book_description);
-//        final ImageView overseas_book_img = findViewById(R.id.overseas_book_img);
-//        final TextView overseas_book_title = findViewById(R.id.overseas_book_title);
-//        final TextView overseas_book_description = findViewById(R.id.overseas_book_description);
-//
-////        Thread domestic_bestseller = new Thread(new DomesticBestSeller(domestic_best_sellers));
-////        domestic_bestseller.start();
-////
-////        Thread overseas_bestseller = new Thread(new OverseasBestSeller(overseas_best_sellers));
-////        overseas_bestseller.start();
-//
-//        domestic_handler = new Handler();
-//        overseas_handler = new Handler();
-//
-//        // 베스트 셀러 나타내는 스레드
-//        new Thread(){
-//            @Override
-//            public void run() {
-//
-//                domestic_handler.post(new Runnable() {
-//
-//                    @Override
-//                    public void run() {
-//
-//                        for(int i = 0; i < 5; i++){
-//
-//                            Uri book_uri = Uri.parse(domestic_best_sellers[i].getImage());
-//                            Glide.with(BookSearchActivity.this).load(book_uri).into(domestic_book_img);
-//                            domestic_book_title.setText(domestic_best_sellers[i].getTitle());
-//                            domestic_book_description.setText(domestic_best_sellers[i].getDescription());
-//
-//                            Log.d("thread_check", domestic_best_sellers[i].getTitle());
-//
-//                            try {
-//                                Thread.sleep(2000);
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
-//
-//                            if(i==4){
-//                                i = 0;
-//                            }
-//
-//                        }
-//
-//                    }
-//
-//                });
-//
-//            }
-//        }.start();
-//
-//        new Thread(){
-//            @Override
-//            public void run() {
-//
-//                overseas_handler.post(new Runnable() {
-//
-//                    @Override
-//                    public void run() {
-//
-//                        for(int i = 0; i < 5; i++){
-//
-//                            Uri book_uri = Uri.parse(overseas_best_sellers[i].getImage());
-//                            Glide.with(BookSearchActivity.this).load(book_uri).into(overseas_book_img);
-//                            overseas_book_title.setText(overseas_best_sellers[i].getTitle());
-//                            overseas_book_description.setText(overseas_best_sellers[i].getDescription());
-//
-//                            try {
-//                                Thread.sleep(2000);
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
-//
-//                            if(i==4){
-//                                i = 0;
-//                            }
-//
-//                        }
-//
-//                    }
-//
-//                });
-//
-//            }
-//        }.start();
-
         // 리사이클러뷰 객체화
         book_recyclerview = findViewById(R.id.recyclerView);
 
@@ -241,26 +150,6 @@ public class BookSearchActivity extends AppCompatActivity {
                                 search_result_handler.post(new Runnable() {
                                     @Override
                                     public void run() {
-//                                        AlertDialog.Builder builder = new AlertDialog.Builder(BookSearchActivity.this);
-//                                        builder.setTitle("책을 직접 추가하시겠습니까?");
-//
-//                                        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(DialogInterface dialog, int which) {
-//                                                Intent intent = new Intent(BookSearchActivity.this, AddReadBookActivity.class);
-//                                                intent.putExtra("Book", new Book());
-//                                                startActivity(intent);
-//                                            }
-//                                        });
-//
-//                                        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(DialogInterface dialog, int which) {
-//                                                dialog.dismiss();
-//                                            }
-//                                        });
-//
-//                                        AlertDialog direct_book_add = builder.create();
 
                                         display_num_textview.setText("검색 결과가 없습니다.");
 
@@ -275,12 +164,6 @@ public class BookSearchActivity extends AppCompatActivity {
 
 
                             }else{
-//                                Message msg = search_result_handler.obtainMessage();
-//                                search_result_handler.sendMessage(msg.obj(received_books));
-
-//                                Message msg = Message.obtain();
-//                                msg.obj = received_books;
-//                                search_result_handler.sendMessage(msg);
 
                                 search_result_handler.post(new Runnable() {
                                     @Override
@@ -318,61 +201,6 @@ public class BookSearchActivity extends AppCompatActivity {
             }
 
         });
-
-//        domestic_handler = new Handler(){
-//            @Override
-//            public void handleMessage(Message msg){
-//
-//                Book domestic_book = (Book) msg.obj;
-//
-//                if(msg.what == 0){
-//                    Uri book_uri = Uri.parse(domestic_book.getImage());
-//                    Glide.with(BookSearchActivity.this).load(book_uri).into(domestic_book_img);
-//                    domestic_book_title.setText(domestic_book.getTitle());
-//                    domestic_book_description.setText(domestic_book.getDescription());
-//
-//                }
-//
-////                Uri book_uri = Uri.parse(domestic_book.getImage());
-////                Glide.with(BookSearchActivity.this).load(book_uri).into(domestic_book_img);
-////                domestic_book_title.setText(domestic_book.getTitle());
-////                domestic_book_description.setText(domestic_book.getDescription());
-//
-//            }
-//        };
-//
-//        overseas_handler = new Handler(){
-//            @Override
-//            public void handleMessage(Message msg){
-//
-//                Book overseas_book = (Book) msg.obj;
-//
-//                if(msg.what == 0){
-//                    Uri book_uri = Uri.parse(overseas_book.getImage());
-//                    Glide.with(BookSearchActivity.this).load(book_uri).into(overseas_book_img);
-//                    overseas_book_title.setText(overseas_book.getTitle());
-//                    overseas_book_description.setText(overseas_book.getDescription());
-//                }
-//
-//            }
-//        };
-//            @Override
-//            public void handleMessage(Message msg){
-//        // 스레드 안에서 책 검색 결과가 나오면 그 결과를 리사이클러뷰에 붙여줄 핸들러.
-//        search_result_handler = new Handler(){
-//
-//                // 키보드 내리는 메소드.
-//                book_search_view.clearFocus();
-//
-//                book_recyclerview = findViewById(R.id.recyclerView);
-//                book_recyclerview.setLayoutManager(new LinearLayoutManager(BookSearchActivity.this));
-//
-////                book_recycler_adapter = new BookSearchAdapter(BookSearchActivity.this, received_books);
-//                book_recycler_adapter = new BookSearchAdapter(BookSearchActivity.this, msg);
-//
-//                book_recyclerview.setAdapter(book_recycler_adapter);
-//            }
-//        };
 
     }
 
@@ -908,132 +736,6 @@ public class BookSearchActivity extends AppCompatActivity {
 
         return overseas;
     }
-
-//    public class BestSeller implements Runnable{
-//
-//        Book[] best_sellers = new Book[5];
-//        Handler best_seller_handler = new Handler();
-//
-//        BestSeller(Book[] best_sellers, Handler best_seller_handler){
-//            this.best_sellers = best_sellers;
-//            this.best_seller_handler = best_seller_handler;
-//        }
-//
-//        @Override
-//        public void run() {
-//
-//            for(int i = 0; i < 5; i++){
-//                try{
-//                    // 메세지에 객체 넣기 위한 코드
-////                    Message msg = best_seller_handler.obtainMessage();
-////                    Message msg = new Message();
-//                    Message msg = best_seller_handler.obtainMessage(0, best_sellers[i]);
-////                    msg.what = 0;
-////                    msg.obj = best_sellers[i];
-//
-//                    Log.d("msg_check", best_sellers[i].getTitle());
-//
-//                    best_seller_handler.sendMessage(msg);
-//                    Thread.sleep(2000);
-//
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                if(i == 4){
-//                    i = 0;
-//                }
-//            }
-//
-//        }
-//    }
-
-//    public class DomesticBestSeller implements Runnable{
-//
-//        Book[] best_sellers = new Book[5];
-//
-//        DomesticBestSeller(Book[] best_sellers){
-//            this.best_sellers = best_sellers;
-//        }
-//
-//        @Override
-//        public void run() {
-//
-//            domestic_handler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    for(int i = 0; i < 5; i++){
-//                        Uri book_uri = Uri.parse(best_sellers[i].getImage());
-//                        Glide.with(BookSearchActivity.this).load(book_uri).into(domestic_book_img);
-//                    }
-//
-//                }
-//            });
-////            for(int i = 0; i < 5; i++){
-////                try{
-////                    // 메세지에 객체 넣기 위한 코드
-//////                    Message msg = best_seller_handler.obtainMessage();
-//////                    Message msg = new Message();
-////                    Log.d("msg_check", best_sellers[i].getTitle());
-////
-//////                    Message msg = domestic_handler.obtainMessage();
-//////                    Message msg = new Message();
-//////                    msg.what = 0;
-//////                    msg.obj = best_sellers[i];
-////
-////                    Log.d("msg_check", best_sellers[i].getTitle());
-////
-////                    Thread.sleep(2000);
-////
-////                } catch (InterruptedException e) {
-////                    e.printStackTrace();
-////                }
-////
-////                if(i == 4){
-////                    i = 0;
-////                }
-////            }
-//
-//        }
-//    }
-
-//    public class OverseasBestSeller implements Runnable{
-//
-//        Book[] best_sellers = new Book[5];
-//
-//        OverseasBestSeller(Book[] best_sellers){
-//            this.best_sellers = best_sellers;
-//        }
-//
-//        @Override
-//        public void run() {
-//
-//            for(int i = 0; i < 5; i++){
-//                try{
-//                    // 메세지에 객체 넣기 위한 코드
-////                    Message msg = best_seller_handler.obtainMessage();
-////                    Message msg = new Message();
-//                    Message msg = overseas_handler.obtainMessage(0, best_sellers[i]);
-////                    msg.what = 0;
-////                    msg.obj = best_sellers[i];
-//
-//                    Log.d("msg_check", best_sellers[i].getTitle());
-//
-//                    overseas_handler.sendMessage(msg);
-//
-//                    Thread.sleep(2000);
-//
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                if(i == 4){
-//                    i = 0;
-//                }
-//            }
-//
-//        }
-//    }
 
 
 }

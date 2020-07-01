@@ -148,15 +148,14 @@ public class CollectedBooksActivity extends AppCompatActivity {
             }
         });
 
-//        month_pick_btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                YearMonthPickerDialog year_month_pick_dialog = new YearMonthPickerDialog();
-//                year_month_pick_dialog.all_book_btn.setVisibility(View.VISIBLE);
-//                year_month_pick_dialog.setListener(month_picker_listener);
-//                year_month_pick_dialog.show(getSupportFragmentManager(), "YearMonthPicker");
-//            }
-//        });
+        month_pick_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                YearMonthPickerContainAllDialog year_month_pick_dialog = new YearMonthPickerContainAllDialog();
+                year_month_pick_dialog.setListener(month_picker_listener);
+                year_month_pick_dialog.show(getSupportFragmentManager(), "YearMonthPicker");
+            }
+        });
 
     }
 

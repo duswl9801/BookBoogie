@@ -89,8 +89,23 @@ public class ChoicePassageImgActivity extends AppCompatActivity {
         highlight_img_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ImgCanvasActivity.class);
-                startActivity(intent);
+
+                // 비트맵이미지가 널이면 못 넘어가도록 설정
+                if(resized_img == null){
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                    builder.setTitle("이미지를 넣어 주세요");
+
+                    builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {}
+                    });
+
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), ImgCanvasActivity.class);
+                    startActivity(intent);
+                }
+
 
                 //todo finsh()??????????????????????????????
             }

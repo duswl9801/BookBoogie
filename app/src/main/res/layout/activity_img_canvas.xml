@@ -60,6 +60,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/top_guideline_canvas">
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="초기화" />
+
+        <com.reading_app.bookboogie.TouchDrawImgCanvas
+            android:id="@+id/img_canvas"
+            android:layout_width="300dp"
+            android:layout_height="400dp" />
+
+
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
