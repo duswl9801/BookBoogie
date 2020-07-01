@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         ConstraintLayout saved_passage_container = findViewById(R.id.saved_passage_container);
         ConstraintLayout calender_container = findViewById(R.id.calender_container);
         ConstraintLayout dictionary_container = findViewById(R.id.dictionary_container);
-        ConstraintLayout change_theme_container = findViewById(R.id.change_theme_container);
+//        ConstraintLayout change_theme_container = findViewById(R.id.change_theme_container);
 
         read_books_count = findViewById(R.id.read_books_count);
         want_books_count = findViewById(R.id.want_read_books_count);
@@ -110,14 +110,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        change_theme_container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), AnotherMainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+//        change_theme_container.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getApplicationContext(), AnotherMainActivity.class);
+//                startActivity(intent);
+//                finish();
+//            }
+//        });
 
         camera_btn.setOnClickListener(new View.OnClickListener() {
             @Override
