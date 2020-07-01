@@ -1,6 +1,7 @@
 package com.reading_app.bookboogie;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,6 +30,7 @@ public class ImgCanvasActivity extends AppCompatActivity {
     // xml 파일의 속성들 선언
     ImageButton back_btn;
     Button save_btn;
+    Button initialize_btn;
     TouchDrawImgCanvas my_canvas;
 
     // 쉐어드에 저장되어있는 비트맵이미지 넣을 변수. 문자열로 저장되어 있기 때문에 string으로 먼저 받고 비트맵으로 바꾼다.
@@ -55,6 +57,7 @@ public class ImgCanvasActivity extends AppCompatActivity {
 
         back_btn = findViewById(R.id.backBtn);
         save_btn = findViewById(R.id.saveBtn);
+        initialize_btn = findViewById(R.id.initialize_btn);
         my_canvas = (TouchDrawImgCanvas)findViewById(R.id.img_canvas);
 
         // 저장되어있는 이미지들의 어레이리스트를 불러온다.
@@ -99,7 +102,18 @@ public class ImgCanvasActivity extends AppCompatActivity {
 
                 Toast.makeText(getApplicationContext(), "저장 성공", Toast.LENGTH_SHORT).show();
 
-                finish();
+                Intent intent = new Intent(getApplicationContext(), SavedPassageListsActivity.class);
+                // 바로 저장된 문장들 액티비티로 넘어가고 이미지 저장하기까지 액티비티들은 없애기 위해 플래그 사용
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+
+            }
+        });
+
+        initialize_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                my_canvas.initialization();
             }
         });
 
