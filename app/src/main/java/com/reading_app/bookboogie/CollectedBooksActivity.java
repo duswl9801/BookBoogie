@@ -1,9 +1,11 @@
 package com.reading_app.bookboogie;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,13 +19,26 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
 public class CollectedBooksActivity extends AppCompatActivity {
+
+    // 어레이리스트를 쉐어드 프리퍼런스에 저장할 떄, key로 사용할 문자열 변수.
+    // 쉐어드 프리퍼런스 불러올때 key로 사용할 문자열 변수.
+    // 읽고 싶은 책
+    private static final String WANT_READ_BOOKS = "want_read_books";
+    // 읽은 책
+    private static final String READ_BOOKS = "read_books";
 
     // 옆에 생성자 안붙여서 add할 때 에러났었음.
     ArrayList<Book> books = new ArrayList<>();
@@ -75,15 +90,17 @@ public class CollectedBooksActivity extends AppCompatActivity {
 
             book_type_textview.setText("읽은 책들");
 
-            // 쉐어드 프리퍼런스 열기.
-            SharedPreferences book_sharedpreference = getSharedPreferences("book_data", MODE_PRIVATE);
-            Map<String, ?> prefsMap = book_sharedpreference.getAll();
-            for(Map.Entry<String, ?> entry : prefsMap.entrySet()){
-                Gson gson = new Gson();
-                String json =  entry.getValue().toString();
-                books.add(gson.fromJson(json, Book.class));
+            books = getStringArrayPref(READ_BOOKS, "read_book");
 
-            }
+//            // 쉐어드 프리퍼런스 열기.
+//            SharedPreferences book_sharedpreference = getSharedPreferences("book_data", MODE_PRIVATE);
+//            Map<String, ?> prefsMap = book_sharedpreference.getAll();
+//            for(Map.Entry<String, ?> entry : prefsMap.entrySet()){
+//                Gson gson = new Gson();
+//                String json =  entry.getValue().toString();
+//                books.add(gson.fromJson(json, Book.class));
+//
+//            }
 
 //            Collection<?> collection = book_sharedpreference.getAll().values();
 //            Iterator<?> iter = collection.iterator();
@@ -103,18 +120,21 @@ public class CollectedBooksActivity extends AppCompatActivity {
 
             book_type_textview.setText("읽고 싶은 책들");
 
-            // 쉐어드 프리퍼런스 열기.
-            SharedPreferences book_sharedpreference = getSharedPreferences("wanted_book_data", MODE_PRIVATE);
-            Collection<?> collection = book_sharedpreference.getAll().values();
-            Iterator<?> iter = collection.iterator();
+//            // 쉐어드 프리퍼런스 열기.
+//            SharedPreferences book_sharedpreference = getSharedPreferences("wanted_book_data", MODE_PRIVATE);
+//            Collection<?> collection = book_sharedpreference.getAll().values();
+//            Iterator<?> iter = collection.iterator();
+//
+//            while(iter.hasNext()){
+//                Gson gson = new Gson();
+//                String json = (String)iter.next();
+//                books.add(gson.fromJson(json, Book.class));
+//
+//                Log.d("isSearched_check", String.valueOf(gson.fromJson(json, Book.class).isSearchedBook));
+//            }
 
-            while(iter.hasNext()){
-                Gson gson = new Gson();
-                String json = (String)iter.next();
-                books.add(gson.fromJson(json, Book.class));
-
-                Log.d("isSearched_check", String.valueOf(gson.fromJson(json, Book.class).isSearchedBook));
-            }
+            //////////////////////////////////////////////
+            books = getStringArrayPref(WANT_READ_BOOKS, "want_book");
 
 
         }
@@ -213,6 +233,45 @@ public class CollectedBooksActivity extends AppCompatActivity {
 
     }
 
+
+    // 어레이리스트를 쉐어드 프리퍼런스에 저장하는 메소드.
+    private void setStringArrayPref(String sp_name, String key, ArrayList<Book> values) {
+
+        SharedPreferences prefs = getSharedPreferences(sp_name, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(values);
+
+        editor.putString(key, json);
+        editor.commit();
+
+    }
+
+
+
+    // 제이슨을 어레이리스트로 변환하는 메소드
+    private ArrayList<Book> getStringArrayPref(String sp_name, String key) {
+
+        ArrayList<Book> urls = new ArrayList<>();
+
+        SharedPreferences prefs = getSharedPreferences(sp_name, MODE_PRIVATE);
+
+        // 어레이 문자열로 바꾼거 저장됨
+        String arr_to_string = prefs.getString(key, "default");
+
+        Type listtype = new TypeToken<ArrayList<Book>>(){}.getType();
+
+        Gson gson = new Gson();
+        try{
+            urls = gson.fromJson(arr_to_string, listtype);
+        } catch (IllegalStateException |  JsonSyntaxException e) {
+            e.printStackTrace();
+        }
+
+
+        return urls;
+    }
 
 
 }

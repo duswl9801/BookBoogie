@@ -12,13 +12,25 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+
+    // 어레이리스트를 쉐어드 프리퍼런스에 저장할 떄, key로 사용할 문자열 변수.
+    // 쉐어드 프리퍼런스 불러올때 key로 사용할 문자열 변수.
+    // 읽고 싶은 책
+    private static final String WANT_READ_BOOKS = "want_read_books";
+    // 읽은 책
+    private static final String READ_BOOKS = "read_books";
 
     private static final String TAG = "MyMainActivity";     // 로그 찍을 때 이용할 변수
     // 쉐어드 프리퍼런스 불러올때 key로 사용할 문자열 변수.
@@ -28,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
      사용자가 읽은 책들을 클릭하고 넘어갔는지 읽고 싶은 책들을 클릭하고 넘어갔는지 구분해주는 변수
     읽은 책들을 클릭하면 0을 넘겨주고 읽고 싶은 책들을 클릭하면 1을 넘겨준다.
      */
-    private static final int READ_BOOKS = 0;
-    private static final int WANT_READ_BOOKS = 1;
+    private static final int READ_BOOKS_TYPE = 0;
+    private static final int WANT_READ_BOOKS_TYPE = 1;
 
     // 읽은 책들, 읽고 싶은 책들, 저장한 문장들의 개수를 저장해 놓을 변수.
     int count = 0;
@@ -72,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), CollectedBooksActivity.class);
-                intent.putExtra("book_type", READ_BOOKS);
+                intent.putExtra("book_type", READ_BOOKS_TYPE);
                 startActivity(intent);
             }
         });
@@ -81,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), CollectedBooksActivity.class);
-                intent.putExtra("book_type", WANT_READ_BOOKS);
+                intent.putExtra("book_type", WANT_READ_BOOKS_TYPE);
                 startActivity(intent);
             }
         });
@@ -150,12 +162,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void setCounts(){
 
+        ArrayList<Book> book_count = new ArrayList<>();
+
         // 읽은 책들 개수 세팅
-        prefs = getSharedPreferences("book_data", MODE_PRIVATE);
-        Map<String, ?> read_book_prefsMap = prefs.getAll();
-        for(Map.Entry<String, ?> entrty : read_book_prefsMap.entrySet()){
-            count++;
-        }
+//        prefs = getSharedPreferences("book_data", MODE_PRIVATE);
+//        Map<String, ?> read_book_prefsMap = prefs.getAll();
+//        for(Map.Entry<String, ?> entrty : read_book_prefsMap.entrySet()){
+//            count++;
+//        }
+        book_count = getStringArrayPref(READ_BOOKS , "read_book");
+        count = book_count.size();
 
         read_books_count.setText(String.valueOf(count));
 
@@ -163,11 +179,8 @@ public class MainActivity extends AppCompatActivity {
         count = 0;
 
         // 읽고 싶은 책들 개수 세팅
-        prefs = getSharedPreferences("wanted_book_data", MODE_PRIVATE);
-        Map<String, ?> prefsMap = prefs.getAll();
-        for(Map.Entry<String, ?> entrty : prefsMap.entrySet()){
-            count++;
-        }
+        book_count = getStringArrayPref(WANT_READ_BOOKS , "want_book");
+        count = book_count.size();
 
         want_books_count.setText(String.valueOf(count));
 
@@ -199,6 +212,45 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        return urls;
+    }
+
+    // 어레이리스트를 쉐어드 프리퍼런스에 저장하는 메소드.
+    private void setStringArrayPref(String sp_name, String key, ArrayList<Book> values) {
+
+        SharedPreferences prefs = getSharedPreferences(sp_name, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(values);
+
+        editor.putString(key, json);
+        editor.commit();
+
+    }
+
+
+
+    // 제이슨을 어레이리스트로 변환하는 메소드
+    private ArrayList<Book> getStringArrayPref(String sp_name, String key) {
+
+        ArrayList<Book> urls = new ArrayList<>();
+
+        SharedPreferences prefs = getSharedPreferences(sp_name, MODE_PRIVATE);
+
+        // 어레이 문자열로 바꾼거 저장됨
+        String arr_to_string = prefs.getString(key, "default");
+
+        Type listtype = new TypeToken<ArrayList<Book>>(){}.getType();
+
+        Gson gson = new Gson();
+        try{
+            urls = gson.fromJson(arr_to_string, listtype);
+        } catch (IllegalStateException | JsonSyntaxException e) {
+            e.printStackTrace();
+        }
+
+
         return urls;
     }
 

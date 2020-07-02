@@ -28,14 +28,21 @@ import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class AddReadBookActivity extends AppCompatActivity {
+
+    // 어레이리스트를 쉐어드 프리퍼런스에 저장할 떄, key로 사용할 문자열 변수.
+    // 쉐어드 프리퍼런스 불러올때 key로 사용할 문자열 변수.
+    private static final String READ_BOOKS = "read_books";
 
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1001;
     private static final int CAPTURE_IMAGE = 0;
@@ -51,6 +58,8 @@ public class AddReadBookActivity extends AppCompatActivity {
     String bitmap_to_string;
 
     int read_year = 0, read_month = 0;
+
+    ArrayList<Book> read_books = new ArrayList<>();
 
     // 읽은 월 추가 버튼을 눌러서 확인 버튼을 누르면 이 리스너가 실행됨.
     // 다이얼로그에서 선택된 년도, 월 값 받아서 버튼에 세팅.
@@ -87,6 +96,10 @@ public class AddReadBookActivity extends AppCompatActivity {
 
             }
         }
+
+        /////////////////////////////////////////////
+        // 불러오기
+        read_books = getStringArrayPref(READ_BOOKS, "read_book");
 
         // 책 정보 들어있는 인텐트 받기. 제목이 "title"이면 사용자가 직접 입력하는 경우.
         Intent book_data = getIntent();
@@ -163,6 +176,9 @@ public class AddReadBookActivity extends AppCompatActivity {
                 input_book.setReadMonth(read_month);
                 input_book.setMemo(memo.getText().toString());
 
+                ////////////////////////////////////////////////////
+                read_books.add(input_book);
+
                 Log.d("BookDataCheck", input_book.getImage().toString());
                 Log.d("BookDataCheck", String.valueOf(input_book.getRating()));
 
@@ -180,6 +196,10 @@ public class AddReadBookActivity extends AppCompatActivity {
                 Toast.makeText(AddReadBookActivity.this, "저장 성공", Toast.LENGTH_SHORT).show();
 
                 Log.d("searched_book_check", String.valueOf(input_book.isSearchedBook));
+
+                ////////////////////////////////////////////////
+                // 저장
+                setStringArrayPref(READ_BOOKS, "read_book",  read_books);
 
                 finish();
 
@@ -342,6 +362,45 @@ public class AddReadBookActivity extends AppCompatActivity {
         byte[] imageBytes = byteArrayOutputStream.toByteArray();
 
         return Base64.encodeToString(imageBytes, Base64.NO_WRAP);
+    }
+
+    // 어레이리스트를 쉐어드 프리퍼런스에 저장하는 메소드.
+    private void setStringArrayPref(String sp_name, String key, ArrayList<Book> values) {
+
+        SharedPreferences prefs = getSharedPreferences(sp_name, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(values);
+
+        editor.putString(key, json);
+        editor.commit();
+
+    }
+
+
+
+    // 제이슨을 어레이리스트로 변환하는 메소드
+    private ArrayList<Book> getStringArrayPref(String sp_name, String key) {
+
+        ArrayList<Book> urls = new ArrayList<>();
+
+        SharedPreferences prefs = getSharedPreferences(sp_name, MODE_PRIVATE);
+
+        // 어레이 문자열로 바꾼거 저장됨
+        String arr_to_string = prefs.getString(key, "default");
+
+        Type listtype = new TypeToken<ArrayList<Book>>(){}.getType();
+
+        Gson gson = new Gson();
+        try{
+            urls = gson.fromJson(arr_to_string, listtype);
+        } catch (IllegalStateException | JsonSyntaxException e) {
+            e.printStackTrace();
+        }
+
+
+        return urls;
     }
 
 }

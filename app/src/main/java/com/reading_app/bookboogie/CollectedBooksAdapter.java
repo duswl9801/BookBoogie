@@ -23,12 +23,20 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class CollectedBooksAdapter extends RecyclerView.Adapter<CollectedBooksAdapter.BookViewHolder> {
+
+    // 어레이리스트를 쉐어드 프리퍼런스에 저장할 떄, key로 사용할 문자열 변수.
+    // 쉐어드 프리퍼런스 불러올때 key로 사용할 문자열 변수.
+    // 읽고 싶은 책
+    private static final String WANT_READ_BOOKS = "want_read_books";
+    // 읽은 책
+    private static final String READ_BOOKS = "read_books";
 
     ArrayList<Book> books;
     Context my_context;
@@ -105,22 +113,47 @@ public class CollectedBooksAdapter extends RecyclerView.Adapter<CollectedBooksAd
                             @Override
                             public void onClick(View v) {
 
+                                books.remove(getAdapterPosition());
+
                                 // 쉐어드 프리퍼런스에서 먼저 삭제
                                 if(book_type == 0){
-                                    // 쉐어드 프리퍼런스 열기.
-                                    SharedPreferences pref = my_context.getSharedPreferences("book_data", MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = pref.edit();
-                                    editor.remove(books.get(getAdapterPosition()).title);
+//                                    // 쉐어드 프리퍼런스 열기.
+//                                    SharedPreferences pref = my_context.getSharedPreferences("book_data", MODE_PRIVATE);
+//                                    SharedPreferences.Editor editor = pref.edit();
+//                                    editor.remove(books.get(getAdapterPosition()).title);
+//                                    editor.commit();
+
+                                    SharedPreferences prefs = my_context.getSharedPreferences(READ_BOOKS, MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = prefs.edit();
+
+                                    Gson gson = new Gson();
+                                    String json = gson.toJson(books);
+
+                                    editor.putString("read_book", json);
                                     editor.commit();
+
 
                                 } else if(book_type == 1){
-                                    SharedPreferences pref = my_context.getSharedPreferences("wanted_book_data", MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = pref.edit();
-                                    editor.remove(books.get(getAdapterPosition()).title);
-                                    editor.commit();
-                                }
 
-                                books.remove(getAdapterPosition());
+//                                    SharedPreferences pref = my_context.getSharedPreferences("wanted_book_data", MODE_PRIVATE);
+//                                    SharedPreferences.Editor editor = pref.edit();
+//                                    editor.remove(books.get(getAdapterPosition()).title);
+//                                    editor.commit();
+                                    ////////////////////////////////////
+                                    // books 저장 시키기기
+
+                                    SharedPreferences prefs = my_context.getSharedPreferences(WANT_READ_BOOKS, MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = prefs.edit();
+
+                                    Gson gson = new Gson();
+                                    String json = gson.toJson(books);
+
+                                    editor.putString("want_book", json);
+                                    editor.commit();
+
+                               }
+
+
                                 notifyItemRemoved(getAdapterPosition());
                                 notifyItemRangeChanged(getAdapterPosition(), books.size());
 
@@ -200,5 +233,10 @@ public class CollectedBooksAdapter extends RecyclerView.Adapter<CollectedBooksAd
     public void changeItem(){
         notifyDataSetChanged();
     }
+
+
+
+
+
 
 }

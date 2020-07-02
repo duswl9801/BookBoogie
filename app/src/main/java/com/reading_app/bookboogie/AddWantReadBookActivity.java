@@ -2,6 +2,8 @@ package com.reading_app.bookboogie;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.AbstractThreadedSyncAdapter;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -26,11 +29,21 @@ import androidx.core.content.ContextCompat;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 public class AddWantReadBookActivity extends AppCompatActivity {
+
+    // 어레이리스트를 쉐어드 프리퍼런스에 저장할 떄, key로 사용할 문자열 변수.
+    // 쉐어드 프리퍼런스 불러올때 key로 사용할 문자열 변수.
+    private static final String WANT_READ_BOOKS = "want_read_books";
 
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1001;
     private static final int CAPTURE_IMAGE = 0;
@@ -44,10 +57,16 @@ public class AddWantReadBookActivity extends AppCompatActivity {
     Bitmap bitmap;
     String bitmap_to_string;
 
+    ArrayList<Book> want_read_books = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_want_read_book);
+
+        /////////////////////////////////////////////
+        // 불러오기
+        want_read_books = getStringArrayPref(WANT_READ_BOOKS, "want_book");
 
         // 사용자에게 카메라 사용 권한 승인 받는 코드
         int permssionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
@@ -115,6 +134,9 @@ public class AddWantReadBookActivity extends AppCompatActivity {
                 }
                 input_book.setTitle(book_title_editview.getText().toString());
 
+                /////////////////////////////////////////////////////////
+                want_read_books.add(input_book);
+
                 SharedPreferences wanted_book_pref = getSharedPreferences("wanted_book_data", MODE_PRIVATE);
                 SharedPreferences.Editor editor = wanted_book_pref.edit();
 
@@ -126,6 +148,12 @@ public class AddWantReadBookActivity extends AppCompatActivity {
                 editor.putString(input_book.title, book_to_string);
                 editor.commit();
                 Toast.makeText(AddWantReadBookActivity.this, "저장 성공", Toast.LENGTH_SHORT).show();
+
+
+                ////////////////////////////////////////////////
+                // 저장
+                setStringArrayPref(WANT_READ_BOOKS, "want_book",  want_read_books);
+
 
                 finish();
             }
@@ -284,5 +312,73 @@ public class AddWantReadBookActivity extends AppCompatActivity {
     }
 
 
+    // 어레이리스트를 쉐어드 프리퍼런스에 저장하는 메소드.
+    private void setStringArrayPref(String sp_name, String key, ArrayList<Book> values) {
+
+        SharedPreferences prefs = getSharedPreferences(sp_name, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(values);
+
+        editor.putString(key, json);
+        editor.commit();
+
+    }
+//    private void setStringArrayPref(Context context, String key, ArrayList<Book> values) {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+//        SharedPreferences.Editor editor = prefs.edit();
+//        JSONArray a = new JSONArray();
+//        for (int i = 0; i < values.size(); i++) {
+//            a.put(values.get(i));
+//        }
+//        if (!values.isEmpty()) {
+//            editor.putString(key, a.toString());
+//        } else {
+//            editor.putString(key, null);
+//        }
+//        editor.apply();
+//
+//    }
+
+    // 제이슨을 어레이리스트로 변환하는 메소드
+    private ArrayList<Book> getStringArrayPref(String sp_name, String key) {
+
+        ArrayList<Book> urls = new ArrayList<>();
+
+        SharedPreferences prefs = getSharedPreferences(sp_name, MODE_PRIVATE);
+
+        // 어레이 문자열로 바꾼거 저장됨
+        String arr_to_string = prefs.getString(key, "default");
+
+        Type listtype = new TypeToken<ArrayList<Book>>(){}.getType();
+
+        Gson gson = new Gson();
+        try{
+            urls = gson.fromJson(arr_to_string, listtype);
+        } catch (IllegalStateException | JsonSyntaxException e) {
+            e.printStackTrace();
+        }
+
+        return urls;
+    }
+//
+//    private ArrayList<Book> getStringArrayPref(Context context, String key) {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+//        String json = prefs.getString(key, null);
+//        ArrayList<Book> urls = new ArrayList<Book>();
+//        if (json != null) {
+//            try {
+//                JSONArray a = new JSONArray(json);
+//                for (int i = 0; i < a.length(); i++) {
+//                    Book url = (Book) a.get(i);
+//                    urls.add(url);
+//                }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        return urls;
+//    }
 
 }

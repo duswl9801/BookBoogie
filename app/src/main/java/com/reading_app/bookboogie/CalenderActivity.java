@@ -15,8 +15,11 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -24,6 +27,10 @@ import java.util.Collections;
 import java.util.Iterator;
 
 public class CalenderActivity extends AppCompatActivity {
+
+    // 어레이리스트를 쉐어드 프리퍼런스에 저장할 떄, key로 사용할 문자열 변수.
+    // 쉐어드 프리퍼런스 불러올때 key로 사용할 문자열 변수.
+    private static final String READ_BOOKS = "read_books";
 
     // 오늘 날짜 받기 위한 캘린더 변수
     public Calendar calender = Calendar.getInstance();
@@ -56,16 +63,18 @@ public class CalenderActivity extends AppCompatActivity {
         // 처음 년도는 오늘의 년도기 때문에 오늘 년도로 초기화 해줌
         changed_year = today_year;
 
-        // 저장된 읽은 책들 불러와서 어레이 리스트에 넣기
-        SharedPreferences book_sharedpreference = getSharedPreferences("book_data", MODE_PRIVATE);
-        Collection<?> collection = book_sharedpreference.getAll().values();
-        Iterator<?> iter = collection.iterator();
+//        // 저장된 읽은 책들 불러와서 어레이 리스트에 넣기
+//        SharedPreferences book_sharedpreference = getSharedPreferences("book_data", MODE_PRIVATE);
+//        Collection<?> collection = book_sharedpreference.getAll().values();
+//        Iterator<?> iter = collection.iterator();
+//
+//        while(iter.hasNext()){
+//            Gson gson = new Gson();
+//            String json = (String)iter.next();
+//            read_boooks.add(gson.fromJson(json, Book.class));
+//        }
 
-        while(iter.hasNext()){
-            Gson gson = new Gson();
-            String json = (String)iter.next();
-            read_boooks.add(gson.fromJson(json, Book.class));
-        }
+        read_boooks = getStringArrayPref(READ_BOOKS, "read_book");
 
         setChart(today_year, read_boooks);
 
@@ -235,6 +244,29 @@ public class CalenderActivity extends AppCompatActivity {
         // 막대 그래프에 데이터 넣음.
         read_book_barchart.setData(data);
 
+    }
+
+    // 제이슨을 어레이리스트로 변환하는 메소드
+    private ArrayList<Book> getStringArrayPref(String sp_name, String key) {
+
+        ArrayList<Book> urls = new ArrayList<>();
+
+        SharedPreferences prefs = getSharedPreferences(sp_name, MODE_PRIVATE);
+
+        // 어레이 문자열로 바꾼거 저장됨
+        String arr_to_string = prefs.getString(key, "default");
+
+        Type listtype = new TypeToken<ArrayList<Book>>(){}.getType();
+
+        Gson gson = new Gson();
+        try{
+            urls = gson.fromJson(arr_to_string, listtype);
+        } catch (IllegalStateException | JsonSyntaxException e) {
+            e.printStackTrace();
+        }
+
+
+        return urls;
     }
 
 
