@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -41,7 +42,7 @@ public class WantReadBookCheckActivity extends AppCompatActivity {
 
         TextView top_textview = findViewById(R.id.top_textview);
         top_textview.setText(book.title);
-
+        Button modify_btn = findViewById(R.id.modifyBtn);
         ImageButton backBtn = findViewById(R.id.backBtn);
         ImageView book_img = findViewById(R.id.book_img);
         TextView book_title_textview = findViewById(R.id.book_title_textview);
@@ -50,6 +51,16 @@ public class WantReadBookCheckActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
+            }
+        });
+
+        modify_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), BookModifyActivity.class);
+                intent.putExtra("modify_book_type", 1);
+                intent.putExtra("BookData", book.title);
+                startActivity(intent);
             }
         });
 

@@ -41,6 +41,7 @@
         <activity android:name=".WantReadBookCheckActivity"></activity>
         <activity android:name=".ChoicePassageImgActivity"></activity>
         <activity android:name=".ImgCanvasActivity"></activity>
+        <activity android:name=".BookModifyActivity"></activity>
 
     </application>
 

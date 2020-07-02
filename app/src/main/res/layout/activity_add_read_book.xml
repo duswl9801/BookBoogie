@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -51,8 +52,8 @@
 
         <Button
             android:id="@+id/saveBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_width="77dp"
+            android:layout_height="27dp"
             android:background="@android:color/transparent"
             android:text="SAVE"
             android:textSize="18sp"
@@ -107,6 +108,7 @@
         android:layout_marginTop="24dp"
         android:background="@null"
         android:ems="10"
+        android:maxLines="1"
         android:hint="제목을 입력해 주세요"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -125,6 +127,7 @@
         android:layout_marginTop="45dp"
         android:text="rate"
         android:textColor="@android:color/background_dark"
+        android:visibility="visible"
 
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -140,6 +143,7 @@
         android:layout_width="wrap_content"
         android:layout_height="44dp"
         android:layout_alignParentRight="true"
+        android:visibility="visible"
 
         android:layout_marginStart="100dp"
         android:layout_marginLeft="100dp"
@@ -163,6 +167,7 @@
         android:text="month"
         android:textColor="@android:color/background_dark"
         android:textSize="18sp"
+        android:visibility="visible"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -181,6 +186,7 @@
         android:text="memo"
         android:textColor="@android:color/background_dark"
         android:textSize="14sp"
+        android:visibility="visible"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -192,6 +198,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="350dp"
         android:layout_height="150dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -205,6 +212,7 @@
             android:background="@color/cardview_shadow_start_color"
             android:textColorLink="@android:color/transparent"
             android:textCursorDrawable="@android:color/transparent" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -217,6 +225,7 @@
         android:text="읽은 달을 선택해주세요"
         android:textColor="@android:color/darker_gray"
         android:textSize="17sp"
+        android:visibility="visible"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
