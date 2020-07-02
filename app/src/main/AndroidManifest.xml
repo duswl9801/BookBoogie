@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:hardwareAccelerated="true">
+        android:hardwareAccelerated="true"
+        android:largeHeap="true">
 
         <activity android:name="com.reading_app.bookboogie.MainActivity">
             <intent-filter>
@@ -18,6 +19,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.reading_app.bookboogie.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>
+        </provider>
 
         <activity android:name=".LoadingActivity"></activity>
         <activity android:name=".unused.ReadBooksCategoriesActivity"></activity>
@@ -42,6 +52,7 @@
         <activity android:name=".ChoicePassageImgActivity"></activity>
         <activity android:name=".ImgCanvasActivity"></activity>
         <activity android:name=".BookModifyActivity"></activity>
+        <activity android:name=".PassageCheckActivity"></activity>
 
     </application>
 

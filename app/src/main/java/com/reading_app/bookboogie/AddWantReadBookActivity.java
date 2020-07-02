@@ -10,7 +10,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Base64;
@@ -25,12 +29,18 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -40,6 +50,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 public class AddWantReadBookActivity extends AppCompatActivity {
+
+    String mCurrentPhotoPath;
+    static final int REQUEST_TAKE_PHOTO = 0;
 
     // 어레이리스트를 쉐어드 프리퍼런스에 저장할 떄, key로 사용할 문자열 변수.
     // 쉐어드 프리퍼런스 불러올때 key로 사용할 문자열 변수.
@@ -56,6 +69,8 @@ public class AddWantReadBookActivity extends AppCompatActivity {
 
     Bitmap bitmap;
     String bitmap_to_string;
+
+    Bitmap resize_img;
 
     ArrayList<Book> want_read_books = new ArrayList<>();
 
@@ -128,7 +143,8 @@ public class AddWantReadBookActivity extends AppCompatActivity {
 
                     input_book.isSearchedBook = false;
                     // 비트맵 이미지를 문자열로 바꿔서 저장.
-                    bitmap_to_string = getBase64String(bitmap);
+//                    bitmap_to_string = getBase64String(bitmap);
+                    bitmap_to_string = getBase64String(resize_img);
                     input_book.setImage(bitmap_to_string);
 
                 }
@@ -155,7 +171,11 @@ public class AddWantReadBookActivity extends AppCompatActivity {
                 setStringArrayPref(WANT_READ_BOOKS, "want_book",  want_read_books);
 
 
-                finish();
+//                finish();
+                Intent intent = new Intent(AddWantReadBookActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+
             }
         });
 
@@ -165,6 +185,21 @@ public class AddWantReadBookActivity extends AppCompatActivity {
                 getImgDialog();
             }
         });
+
+    }
+
+    public void onResume() {
+        super.onResume();
+        Log.i("addwant~~~~", "onResume");
+
+    }
+
+    // 여기서 받아온 isbn 정보로 검색 결과 나타내야 함.
+    public void onRestart() {
+        super.onRestart();
+        Log.i("addwant~~~~", "onRestart");
+
+
 
     }
 
@@ -211,18 +246,19 @@ public class AddWantReadBookActivity extends AppCompatActivity {
 
                 if(which == 0){// 카메라로 사진촬영 선택
 
-                    // 카메라 암시적 인텐트. 사용할 때마다 카메라 어플 선택하도록 함.
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-                    // 카메라 어플 선택 메세지
-                    String title = getResources().getString(R.string.chooser_title);
-                    // 사진 찍을때마다 어플 선택하기 위해서 createChooser(인텐트, 메세지) 사용.
-                    Intent chooser = Intent.createChooser(intent, title);
-
-                    // 인텐트를 실행할 수 있는 액티비티가 1개 이상일 때 실행하도록 함.
-                    if(intent.resolveActivity(getPackageManager()) != null){
-                        startActivityForResult(chooser, CAPTURE_IMAGE);
-                    }
+//                    // 카메라 암시적 인텐트. 사용할 때마다 카메라 어플 선택하도록 함.
+//                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//
+//                    // 카메라 어플 선택 메세지
+//                    String title = getResources().getString(R.string.chooser_title);
+//                    // 사진 찍을때마다 어플 선택하기 위해서 createChooser(인텐트, 메세지) 사용.
+//                    Intent chooser = Intent.createChooser(intent, title);
+//
+//                    // 인텐트를 실행할 수 있는 액티비티가 1개 이상일 때 실행하도록 함.
+//                    if(intent.resolveActivity(getPackageManager()) != null){
+//                        startActivityForResult(chooser, CAPTURE_IMAGE);
+//                    }
+                    dispatchTakePictureIntent();
 
                 }else if(which == 1){// 앨범에서 불러오기 선택
 
@@ -240,7 +276,10 @@ public class AddWantReadBookActivity extends AppCompatActivity {
 
                     bitmap = BitmapFactory.decodeResource(AddWantReadBookActivity.this.getResources(), R.drawable.book_cover_book);
                     book.isSearchedBook = false;
-                    addBookImgBtn.setImageBitmap(bitmap);
+
+                    resize_img = Bitmap.createScaledBitmap(bitmap, 600, 900, true);
+
+                    addBookImgBtn.setImageBitmap(resize_img);
 
                 }
 
@@ -262,11 +301,52 @@ public class AddWantReadBookActivity extends AppCompatActivity {
 
                     book.isSearchedBook = false;
 
-                    bitmap = (Bitmap) data.getExtras().get("data");
+//                    bitmap = (Bitmap) data.getExtras().get("data");
+                    File file = new File(mCurrentPhotoPath);
+                    bitmap = null;
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.fromFile(file));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
                     if(bitmap != null){
+
+                        ExifInterface ei = null;
+                        try {
+                            ei = new ExifInterface(mCurrentPhotoPath);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                                ExifInterface.ORIENTATION_UNDEFINED);
+
+                        Bitmap rotatedBitmap = null;
+                        switch(orientation) {
+
+                            case ExifInterface.ORIENTATION_ROTATE_90:
+                                rotatedBitmap = rotateImage(bitmap, 90);
+                                break;
+
+                            case ExifInterface.ORIENTATION_ROTATE_180:
+                                rotatedBitmap = rotateImage(bitmap, 180);
+                                break;
+
+                            case ExifInterface.ORIENTATION_ROTATE_270:
+                                rotatedBitmap = rotateImage(bitmap, 270);
+                                break;
+
+                            case ExifInterface.ORIENTATION_NORMAL:
+                            default:
+                                rotatedBitmap = bitmap;
+                        }
+
+                        resize_img = Bitmap.createScaledBitmap(bitmap, 600, 900, true);
+
                         // 사이즈 조절은 나중에
-                        addBookImgBtn.setImageBitmap(bitmap);
+                        addBookImgBtn.setImageBitmap(resize_img);
+
+
                     }
 
                 }
@@ -288,8 +368,9 @@ public class AddWantReadBookActivity extends AppCompatActivity {
                     }
 
                     bitmap = BitmapFactory.decodeStream(in);
+                    resize_img = Bitmap.createScaledBitmap(bitmap, 600, 900, true);
 
-                    addBookImgBtn.setImageBitmap(bitmap);
+                    addBookImgBtn.setImageBitmap(resize_img);
 
                 }
 
@@ -380,5 +461,55 @@ public class AddWantReadBookActivity extends AppCompatActivity {
 //        }
 //        return urls;
 //    }
+
+    // 카메라로 촬영한 이미지를 파일로 저장해주는 함수
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    // 카메라 인텐트를 실행하는 부분
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.reading_app.bookboogie.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+
+    // 이미지 돌려주는 함수
+    public static Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                matrix, true);
+    }
+
+
 
 }

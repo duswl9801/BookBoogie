@@ -98,5 +98,13 @@ public class TouchDrawImgCanvas extends View {
         return true;
 
     }
+    ////////////////////////////////////////////////////////////////
+    public void setColor(int color){
+        this.color = color;
+    }
+
+    public void setLine_thickness(int thickness){
+        this.line_thickness = thickness;
+    }
 
 }

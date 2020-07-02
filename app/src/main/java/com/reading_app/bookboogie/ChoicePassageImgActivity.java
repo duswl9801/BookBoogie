@@ -8,7 +8,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -21,17 +26,25 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ChoicePassageImgActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1001;
     private static final int CAPTURE_IMAGE = 0;
     private static final int PICK_FROM_ALBUM = 1;
+
+    String mCurrentPhotoPath;
+    static final int REQUEST_TAKE_PHOTO = 0;
 
     // xml 파일의 속성들 선언
     ImageButton back_btn;
@@ -90,24 +103,30 @@ public class ChoicePassageImgActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                // 비트맵이미지가 널이면 못 넘어가도록 설정
-                if(resized_img == null){
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-                    builder.setTitle("이미지를 넣어 주세요");
-
-                    builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {}
-                    });
-
-                } else {
-                    Intent intent = new Intent(getApplicationContext(), ImgCanvasActivity.class);
-                    startActivity(intent);
-                }
-
-
-                //todo finsh()??????????????????????????????
+//                BitmapDrawable bitmapDrawable = (BitmapDrawable) picked_img.getDrawable();
+//
+//                Log.d("img_check", picked_img.toString());
+//
+//                // 비트맵이미지가 널이면 못 넘어가도록 설정
+//                if(resized_img == null){
+//
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+//                    builder.setTitle("이미지를 넣어 주세요");
+//
+//                    builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {}
+//                    });
+//
+//                } else {
+//                    Intent intent = new Intent(getApplicationContext(), ImgCanvasActivity.class);
+//                    startActivity(intent);
+//                }
+//
+//
+//                //todo finsh()??????????????????????????????
+                Intent intent = new Intent(getApplicationContext(), ImgCanvasActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -156,17 +175,21 @@ public class ChoicePassageImgActivity extends AppCompatActivity {
 
                 if(which == 0){// 카메라로 사진촬영 선택
                     // 카메라 암시적 인텐트. 사용할 때마다 카메라 어플 선택하도록 함.
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-                    // 카메라 어플 선택 메세지
-                    String title = getResources().getString(R.string.chooser_title);
-                    // 사진 찍을때마다 어플 선택하기 위해서 createChooser(인텐트, 메세지) 사용.
-                    Intent chooser = Intent.createChooser(intent, title);
-
-                    // 인텐트를 실행할 수 있는 액티비티가 1개 이상일 때 실행하도록 함.
-                    if(intent.resolveActivity(getPackageManager()) != null){
-                        startActivityForResult(chooser, CAPTURE_IMAGE);
-                    }
+//                    /////////////////////////////////////////////////////////////////////////////
+//                    Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//
+//                    // 카메라 어플 선택 메세지
+//                    String title = getResources().getString(R.string.chooser_title);
+//                    // 사진 찍을때마다 어플 선택하기 위해서 createChooser(인텐트, 메세지) 사용.
+//                    Intent chooser = Intent.createChooser(intent, title);
+//
+//                    // 인텐트를 실행할 수 있는 액티비티가 1개 이상일 때 실행하도록 함.
+//                    if(intent.resolveActivity(getPackageManager()) != null){
+//                        startActivityForResult(chooser, CAPTURE_IMAGE);
+//                    }
+                    dispatchTakePictureIntent();
 
                 }else if(which == 1) {// 앨범에서 불러오기 선택
 
@@ -189,20 +212,65 @@ public class ChoicePassageImgActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode){
-            case CAPTURE_IMAGE:
+            case REQUEST_TAKE_PHOTO:
 
                 if(resultCode == RESULT_OK){        // 카메라로 사진을 가져왔을때
 
+//                    Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                    File file = new File(mCurrentPhotoPath);
+                    Bitmap bitmap = null;
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.fromFile(file));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-                    Bitmap bitmap = (Bitmap) data.getExtras().get("data");
 
                     if(bitmap != null){
 
-                        // 사이즈 조절하고 이미지 뷰에 세팅하고 비트맵 스트링으로 바꾸기
-                        resized_img = Bitmap.createScaledBitmap(bitmap, 300, 400, true);
-                        picked_img.setImageBitmap(resized_img);
+                        ExifInterface ei = null;
+                        try {
+                            ei = new ExifInterface(mCurrentPhotoPath);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                                ExifInterface.ORIENTATION_UNDEFINED);
 
-                        str_img = getBase64String(resized_img);
+                        Bitmap rotatedBitmap = null;
+                        switch(orientation) {
+
+                            case ExifInterface.ORIENTATION_ROTATE_90:
+                                rotatedBitmap = rotateImage(bitmap, 90);
+                                break;
+
+                            case ExifInterface.ORIENTATION_ROTATE_180:
+                                rotatedBitmap = rotateImage(bitmap, 180);
+                                break;
+
+                            case ExifInterface.ORIENTATION_ROTATE_270:
+                                rotatedBitmap = rotateImage(bitmap, 270);
+                                break;
+
+                            case ExifInterface.ORIENTATION_NORMAL:
+                            default:
+                                rotatedBitmap = bitmap;
+                        }
+
+
+                        // 사이즈 조절하고 이미지 뷰에 세팅하고 비트맵 스트링으로 바꾸기
+//                        resized_img = Bitmap.createScaledBitmap(bitmap, 300, 400, true);
+//                        picked_img.setImageBitmap(resized_img);
+//
+//                        str_img = getBase64String(resized_img);
+
+//                        picked_img.setImageBitmap(rotatedBitmap);
+//
+//                        str_img = getBase64String(rotatedBitmap);
+
+                        picked_img.setImageBitmap(bitmap);
+
+                        str_img = getBase64String(bitmap);
 
                         // 쉐어드에 저장하기
                         SharedPreferences prefs = getSharedPreferences("canvas_img_data", MODE_PRIVATE);
@@ -269,6 +337,54 @@ public class ChoicePassageImgActivity extends AppCompatActivity {
         byte[] imageBytes = byteArrayOutputStream.toByteArray();
 
         return Base64.encodeToString(imageBytes, Base64.NO_WRAP);
+    }
+
+    // 카메라로 촬영한 이미지를 파일로 저장해주는 함수
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    // 카메라 인텐트를 실행하는 부분
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.reading_app.bookboogie.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+
+    // 이미지 돌려주는 함수
+    public static Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                matrix, true);
     }
 
 

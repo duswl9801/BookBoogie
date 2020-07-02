@@ -192,6 +192,38 @@ public class CollectedBooksActivity extends AppCompatActivity {
 
     }
 
+    public void onResume() {
+        super.onResume();
+        Log.i("collect~~~~", "onResume");
+
+    }
+
+    // 여기서 받아온 isbn 정보로 검색 결과 나타내야 함.
+    public void onRestart() {
+        super.onRestart();
+        Log.i("collect~~~~", "onRestart");
+
+//        if(book_type == 0) {     // 읽은 책들 불러오기
+//
+//            books = getStringArrayPref(READ_BOOKS, "read_book");
+//        }else{
+//            books = getStringArrayPref(WANT_READ_BOOKS, "want_book");
+//        }
+//
+//        // 리사이클러뷰 재배치
+//        setRecyclerview();
+
+
+    }
+
+    public void setRecyclerview(){
+
+            CollectedBooksAdapter recyclerview_book_adapter = new CollectedBooksAdapter(this, books, book_type);
+            books_recyclerview.setAdapter(recyclerview_book_adapter);
+            recyclerview_book_adapter.changeItem();
+
+    }
+
     public void setRecyclerview(ArrayList<Book> books, int year, int month){
 
         // 선택된 달에 맞는 책들 넣을 어레이리스트
@@ -228,8 +260,6 @@ public class CollectedBooksActivity extends AppCompatActivity {
             recyclerview_book_adapter.changeItem();
 
         }
-
-
 
     }
 
