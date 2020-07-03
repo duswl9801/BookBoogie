@@ -85,6 +85,9 @@ public class BookModifyActivity extends AppCompatActivity {
             read_year = year;
             read_month = month;
 
+            book.setReadYear(read_year);
+            book.setReadMonth(read_month);
+
             month_btn.setText(String.valueOf(read_year) + "." + String.valueOf(read_month));
         }
     };
@@ -144,11 +147,13 @@ public class BookModifyActivity extends AppCompatActivity {
                 }
             }
 
-            // 쉐어드 프리퍼런스에서 인텐트로 받은 책 제목으로 책 찾기
-            SharedPreferences book_sharedpreference = getSharedPreferences("wanted_book_data", MODE_PRIVATE);
-            Gson gson = new Gson();
-            String json = book_sharedpreference.getString(intent_book_title, "");
-            book = gson.fromJson(json, Book.class);
+            book = books.get(index);
+
+//            // 쉐어드 프리퍼런스에서 인텐트로 받은 책 제목으로 책 찾기
+//            SharedPreferences book_sharedpreference = getSharedPreferences("wanted_book_data", MODE_PRIVATE);
+//            Gson gson = new Gson();
+//            String json = book_sharedpreference.getString(intent_book_title, "");
+//            book = gson.fromJson(json, Book.class);
 
             if(book.isSearchedBook == true){     // 책의 이미지가 검색 결과인 url로 전해졌을때
                 Uri book_uri = Uri.parse(book.getImage());
@@ -181,12 +186,13 @@ public class BookModifyActivity extends AppCompatActivity {
                 }
             }
 
+            book = books.get(index);
 
-            // 쉐어드 프리퍼런스 열기.
-            SharedPreferences book_sharedpreference = getSharedPreferences("book_data", MODE_PRIVATE);
-            Gson gson = new Gson();
-            String json = book_sharedpreference.getString(intent_book_title, "");
-            book = gson.fromJson(json, Book.class);
+//            // 쉐어드 프리퍼런스 열기.
+//            SharedPreferences book_sharedpreference = getSharedPreferences("book_data", MODE_PRIVATE);
+//            Gson gson = new Gson();
+//            String json = book_sharedpreference.getString(intent_book_title, "");
+//            book = gson.fromJson(json, Book.class);
 
             if(book.isSearchedBook == true){     // 책의 이미지가 검색 결과인 url로 전해졌을때
                 Uri book_uri = Uri.parse(book.getImage());
@@ -203,7 +209,6 @@ public class BookModifyActivity extends AppCompatActivity {
                 addBookImgBtn.setImageBitmap(img_bitmap);
 
             }
-
 
             title.setText(book.getTitle());
             // 커서 맨 마지막으로 놓기
@@ -306,8 +311,8 @@ public class BookModifyActivity extends AppCompatActivity {
                     }
                     input_book.setTitle(title.getText().toString());
                     input_book.setRating(ratingBar.getRating());
-                    input_book.setReadYear(read_year);
-                    input_book.setReadMonth(read_month);
+                    input_book.setReadYear(book.read_year);
+                    input_book.setReadMonth(book.read_month);
                     input_book.setMemo(memo.getText().toString());
 
 //                    ////////////////////////////////////////////////////

@@ -53,12 +53,67 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:orientation="vertical"
         android:gravity="center"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/top_guideline_canvas">
+        app:layout_constraintTop_toTopOf="@+id/top_guideline_canvas"
+        app:layout_constraintVertical_bias="0.0">
+
+<!--        <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal">-->
+
+<!--            <Button-->
+<!--                android:id="@+id/yellow"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="노란색"/>-->
+
+<!--        <Button-->
+<!--            android:id="@+id/pink"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="초록색"/>-->
+
+<!--            <Button-->
+<!--                android:id="@+id/blue"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="파란색"/>-->
+
+
+<!--    </LinearLayout>-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal">-->
+
+<!--            <Button-->
+<!--                android:id="@+id/small"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="얇은 형광펜" />-->
+
+<!--            <Button-->
+<!--                android:id="@+id/middle"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="중간 형광펜" />-->
+
+<!--            <Button-->
+<!--                android:id="@+id/big"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="굵은 형광펜" />-->
+
+
+<!--        </LinearLayout>-->
+
 
         <Button
             android:id="@+id/initialize_btn"
@@ -70,7 +125,6 @@
             android:id="@+id/img_canvas"
             android:layout_width="300dp"
             android:layout_height="400dp" />
-
 
 
     </LinearLayout>

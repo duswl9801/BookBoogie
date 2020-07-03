@@ -67,7 +67,7 @@ public class AddWantReadBookActivity extends AppCompatActivity {
 
     Book book;
 
-    Bitmap bitmap;
+    Bitmap bitmap = null;
     String bitmap_to_string;
 
     Bitmap resize_img;
@@ -134,47 +134,103 @@ public class AddWantReadBookActivity extends AppCompatActivity {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if((book.isSearchedBook == false) && (bitmap != null)){
+                    Book input_book = new Book();       // 쉐어드 프리퍼런스에 저장할 책 객체 생성.
 
-                Book input_book = new Book();       // 쉐어드 프리퍼런스에 저장할 책 객체 생성.
+                    if(book.isSearchedBook == true){       // 검색해서 저장하는 책일 때
+                        input_book.setImage(book.getImage());
+                    } else{     // 직접 입력하는 책일 때
 
-                if(book.isSearchedBook == true){       // 검색해서 저장하는 책일 때
-                    input_book.setImage(book.getImage());
-                } else{     // 직접 입력하는 책일 때
-
-                    input_book.isSearchedBook = false;
-                    // 비트맵 이미지를 문자열로 바꿔서 저장.
+                        input_book.isSearchedBook = false;
+                        // 비트맵 이미지를 문자열로 바꿔서 저장.
 //                    bitmap_to_string = getBase64String(bitmap);
-                    bitmap_to_string = getBase64String(resize_img);
-                    input_book.setImage(bitmap_to_string);
+                        bitmap_to_string = getBase64String(resize_img);
+                        input_book.setImage(bitmap_to_string);
 
-                }
-                input_book.setTitle(book_title_editview.getText().toString());
+                    }
+                    input_book.setTitle(book_title_editview.getText().toString());
 
-                /////////////////////////////////////////////////////////
-                want_read_books.add(input_book);
+                    /////////////////////////////////////////////////////////
+                    want_read_books.add(input_book);
 
-                SharedPreferences wanted_book_pref = getSharedPreferences("wanted_book_data", MODE_PRIVATE);
-                SharedPreferences.Editor editor = wanted_book_pref.edit();
+                    SharedPreferences wanted_book_pref = getSharedPreferences("wanted_book_data", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = wanted_book_pref.edit();
 
-                // gson이용해서 책 객체를 스트링으로 바꿈.
-                Gson gson = new Gson();
-                String book_to_string = gson.toJson(input_book);
+                    // gson이용해서 책 객체를 스트링으로 바꿈.
+                    Gson gson = new Gson();
+                    String book_to_string = gson.toJson(input_book);
 
-                // 바꾼 스트링 에디터로 쉐어드 프리퍼런스에 저장.
-                editor.putString(input_book.title, book_to_string);
-                editor.commit();
-                Toast.makeText(AddWantReadBookActivity.this, "저장 성공", Toast.LENGTH_SHORT).show();
+                    // 바꾼 스트링 에디터로 쉐어드 프리퍼런스에 저장.
+                    editor.putString(input_book.title, book_to_string);
+                    editor.commit();
+                    Toast.makeText(AddWantReadBookActivity.this, "저장 성공", Toast.LENGTH_SHORT).show();
 
 
-                ////////////////////////////////////////////////
-                // 저장
-                setStringArrayPref(WANT_READ_BOOKS, "want_book",  want_read_books);
+                    ////////////////////////////////////////////////
+                    // 저장
+                    setStringArrayPref(WANT_READ_BOOKS, "want_book",  want_read_books);
 
 
 //                finish();
-                Intent intent = new Intent(AddWantReadBookActivity.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                    Intent intent = new Intent(AddWantReadBookActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                } else if(book.isSearchedBook == true){
+                    Book input_book = new Book();       // 쉐어드 프리퍼런스에 저장할 책 객체 생성.
+
+                    if(book.isSearchedBook == true){       // 검색해서 저장하는 책일 때
+                        input_book.setImage(book.getImage());
+                    } else{     // 직접 입력하는 책일 때
+
+                        input_book.isSearchedBook = false;
+                        // 비트맵 이미지를 문자열로 바꿔서 저장.
+//                    bitmap_to_string = getBase64String(bitmap);
+                        bitmap_to_string = getBase64String(resize_img);
+                        input_book.setImage(bitmap_to_string);
+
+                    }
+                    input_book.setTitle(book_title_editview.getText().toString());
+
+                    /////////////////////////////////////////////////////////
+                    want_read_books.add(input_book);
+
+                    SharedPreferences wanted_book_pref = getSharedPreferences("wanted_book_data", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = wanted_book_pref.edit();
+
+                    // gson이용해서 책 객체를 스트링으로 바꿈.
+                    Gson gson = new Gson();
+                    String book_to_string = gson.toJson(input_book);
+
+                    // 바꾼 스트링 에디터로 쉐어드 프리퍼런스에 저장.
+                    editor.putString(input_book.title, book_to_string);
+                    editor.commit();
+                    Toast.makeText(AddWantReadBookActivity.this, "저장 성공", Toast.LENGTH_SHORT).show();
+
+
+                    ////////////////////////////////////////////////
+                    // 저장
+                    setStringArrayPref(WANT_READ_BOOKS, "want_book",  want_read_books);
+
+
+//                finish();
+                    Intent intent = new Intent(AddWantReadBookActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
+                else {
+
+                    new AlertDialog.Builder(AddWantReadBookActivity.this) // TestActivity 부분에는 현재 Activity의 이름 입력.
+                            .setMessage("이미지를 넣어주세요")     // 제목 부분 (직접 작성)
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {      // 버튼1 (직접 작성)
+                                public void onClick(DialogInterface dialog, int which){
+//                                    Toast.makeText(getApplicationContext(), "확인 누름", Toast.LENGTH_SHORT).show(); // 실행할 코드
+                                }
+                            })
+
+                            .show();
+
+                }
+
 
             }
         });

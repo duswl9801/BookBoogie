@@ -64,7 +64,7 @@ public class AddReadBookActivity extends AppCompatActivity {
     private static ImageButton addBookImgBtn;
     Button month_btn;
 
-    Bitmap bitmap;
+    Bitmap bitmap = null;
     Book book;
 
     Bitmap resize_img;
@@ -166,59 +166,132 @@ public class AddReadBookActivity extends AppCompatActivity {
 
                 Log.d("searched", "book.isSearchedBook is " + book.isSearchedBook);
 
-                Book input_book = new Book();
+                if( (book.isSearchedBook == false) && (bitmap != null) ){
+                    Book input_book = new Book();
 
-                if(book.isSearchedBook == true){       // 검색해서 저장하는 책일 때
+                    if(book.isSearchedBook == true){       // 검색해서 저장하는 책일 때
 
                         input_book.setImage(book.getImage());
+                    }
+                    else{
+
+                        Log.d("searched", "book.isSearched이 false일때 코드");
+
+                        // 저장되는건 input_book이라서 얘의 isSrarchedBook을 false로 바꿨어야 했는데 안바꿔서 직접저장할때 이미지가 안떴었음.
+                        input_book.isSearchedBook = false;
+
+                        // 비트맵 이미지를 문자열로 바꿔서 저장.
+                        bitmap_to_string = getBase64String(bitmap);
+                        input_book.setImage(bitmap_to_string);
+
+                    }
+                    input_book.setTitle(title.getText().toString());
+                    input_book.setRating(ratingBar.getRating());
+                    input_book.setReadYear(read_year);
+                    input_book.setReadMonth(read_month);
+                    input_book.setMemo(memo.getText().toString());
+
+                    ////////////////////////////////////////////////////
+                    read_books.add(input_book);
+
+                    Log.d("BookDataCheck", input_book.getImage().toString());
+                    Log.d("BookDataCheck", String.valueOf(input_book.getRating()));
+
+                    SharedPreferences read_book_sharedpreference = getSharedPreferences("book_data", MODE_PRIVATE);
+                    SharedPreferences.Editor book_editor = read_book_sharedpreference.edit();
+
+                    // gson이용해서 책 객체를 스트링으로 바꿈.
+                    Gson gson = new Gson();
+                    String book_to_string = gson.toJson(input_book);
+
+                    // 바꾼 스트링 에디터로 쉐어드 프리퍼런스에 저장.
+                    book_editor.putString(input_book.title, book_to_string);
+                    book_editor.commit();
+
+                    Toast.makeText(AddReadBookActivity.this, "저장 성공", Toast.LENGTH_SHORT).show();
+
+                    Log.d("searched_book_check", String.valueOf(input_book.isSearchedBook));
+
+                    ////////////////////////////////////////////////
+                    // 저장
+                    setStringArrayPref(READ_BOOKS, "read_book",  read_books);
+
+//                finish();
+                    Intent intent = new Intent(AddReadBookActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                } else if(book.isSearchedBook == true){
+                    Book input_book = new Book();
+
+                    if(book.isSearchedBook == true){       // 검색해서 저장하는 책일 때
+
+                        input_book.setImage(book.getImage());
+                    }
+                    else{
+
+                        Log.d("searched", "book.isSearched이 false일때 코드");
+
+                        // 저장되는건 input_book이라서 얘의 isSrarchedBook을 false로 바꿨어야 했는데 안바꿔서 직접저장할때 이미지가 안떴었음.
+                        input_book.isSearchedBook = false;
+
+                        // 비트맵 이미지를 문자열로 바꿔서 저장.
+                        bitmap_to_string = getBase64String(bitmap);
+                        input_book.setImage(bitmap_to_string);
+
+                    }
+                    input_book.setTitle(title.getText().toString());
+                    input_book.setRating(ratingBar.getRating());
+                    input_book.setReadYear(read_year);
+                    input_book.setReadMonth(read_month);
+                    input_book.setMemo(memo.getText().toString());
+
+                    ////////////////////////////////////////////////////
+                    read_books.add(input_book);
+
+                    Log.d("BookDataCheck", input_book.getImage().toString());
+                    Log.d("BookDataCheck", String.valueOf(input_book.getRating()));
+
+                    SharedPreferences read_book_sharedpreference = getSharedPreferences("book_data", MODE_PRIVATE);
+                    SharedPreferences.Editor book_editor = read_book_sharedpreference.edit();
+
+                    // gson이용해서 책 객체를 스트링으로 바꿈.
+                    Gson gson = new Gson();
+                    String book_to_string = gson.toJson(input_book);
+
+                    // 바꾼 스트링 에디터로 쉐어드 프리퍼런스에 저장.
+                    book_editor.putString(input_book.title, book_to_string);
+                    book_editor.commit();
+
+                    Toast.makeText(AddReadBookActivity.this, "저장 성공", Toast.LENGTH_SHORT).show();
+
+                    Log.d("searched_book_check", String.valueOf(input_book.isSearchedBook));
+
+                    ////////////////////////////////////////////////
+                    // 저장
+                    setStringArrayPref(READ_BOOKS, "read_book",  read_books);
+
+//                finish();
+                    Intent intent = new Intent(AddReadBookActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
                 }
                 else{
 
-                    Log.d("searched", "book.isSearched이 false일때 코드");
-
-                    // 저장되는건 input_book이라서 얘의 isSrarchedBook을 false로 바꿨어야 했는데 안바꿔서 직접저장할때 이미지가 안떴었음.
-                    input_book.isSearchedBook = false;
-
-                    // 비트맵 이미지를 문자열로 바꿔서 저장.
-                    bitmap_to_string = getBase64String(bitmap);
-                    input_book.setImage(bitmap_to_string);
+                    new AlertDialog.Builder(AddReadBookActivity.this) // TestActivity 부분에는 현재 Activity의 이름 입력.
+                            .setMessage("이미지를 넣어주세요")     // 제목 부분 (직접 작성)
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {      // 버튼1 (직접 작성)
+                                public void onClick(DialogInterface dialog, int which){
+                                }
+                            })
+//                            .setNegativeButton("취소", new DialogInterface.OnClickListener() {     // 버튼2 (직접 작성)
+//                                public void onClick(DialogInterface dialog, int which){
+////                                    Toast.makeText(getApplicationContext(), "취소 누름", Toast.LENGTH_SHORT).show(); // 실행할 코드
+//                                }
+//                            })
+                            .show();
 
                 }
-                input_book.setTitle(title.getText().toString());
-                input_book.setRating(ratingBar.getRating());
-                input_book.setReadYear(read_year);
-                input_book.setReadMonth(read_month);
-                input_book.setMemo(memo.getText().toString());
 
-                ////////////////////////////////////////////////////
-                read_books.add(input_book);
-
-                Log.d("BookDataCheck", input_book.getImage().toString());
-                Log.d("BookDataCheck", String.valueOf(input_book.getRating()));
-
-                SharedPreferences read_book_sharedpreference = getSharedPreferences("book_data", MODE_PRIVATE);
-                SharedPreferences.Editor book_editor = read_book_sharedpreference.edit();
-
-                // gson이용해서 책 객체를 스트링으로 바꿈.
-                Gson gson = new Gson();
-                String book_to_string = gson.toJson(input_book);
-
-                // 바꾼 스트링 에디터로 쉐어드 프리퍼런스에 저장.
-                book_editor.putString(input_book.title, book_to_string);
-                book_editor.commit();
-
-                Toast.makeText(AddReadBookActivity.this, "저장 성공", Toast.LENGTH_SHORT).show();
-
-                Log.d("searched_book_check", String.valueOf(input_book.isSearchedBook));
-
-                ////////////////////////////////////////////////
-                // 저장
-                setStringArrayPref(READ_BOOKS, "read_book",  read_books);
-
-//                finish();
-                Intent intent = new Intent(AddReadBookActivity.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
 
             }
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Base64;
@@ -59,6 +60,15 @@ public class ImgCanvasActivity extends AppCompatActivity {
         save_btn = findViewById(R.id.saveBtn);
         initialize_btn = findViewById(R.id.initialize_btn);
         my_canvas = (TouchDrawImgCanvas)findViewById(R.id.img_canvas);
+//
+//        Button yellow = findViewById(R.id.yellow);
+//        Button pink = findViewById(R.id.pink);
+//        Button blue = findViewById(R.id.pink);
+//
+//        Button small = findViewById(R.id.small);
+//        Button middle = findViewById(R.id.middle);
+//        Button big = findViewById(R.id.big);
+
 
         // 저장되어있는 이미지들의 어레이리스트를 불러온다.
         str_save_imgs = getStringArrayPref(getApplicationContext(), HIGHLIGHTED_IMGS_ARRAYLIST);
@@ -116,6 +126,49 @@ public class ImgCanvasActivity extends AppCompatActivity {
                 my_canvas.initialization();
             }
         });
+      /////////////////////////////////////////////////////////////////////
+
+//        yellow.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                my_canvas.setColor(Color.YELLOW);
+//            }
+//        });
+//
+//        pink.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                my_canvas.setColor(Color.GREEN);
+//            }
+//        });
+//
+//        blue.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                my_canvas.setColor(Color.BLUE);
+//            }
+//        });
+//
+//        small.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                my_canvas.setLine_thickness(30);
+//            }
+//        });
+//
+//        middle.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                my_canvas.setLine_thickness(50);
+//            }
+//        });
+//
+//        big.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                my_canvas.setLine_thickness(80);
+//            }
+//        });
 
     }
 
